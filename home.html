@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-lang="zh">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +10,7 @@
   (function () {
     var q = new URLSearchParams(location.search).get("lang"), lang = q === "zh" || q === "en" ? q : null;
     try { if (lang) localStorage.setItem("spaceact-lang", lang); else lang = localStorage.getItem("spaceact-lang"); } catch (e) { /* storage blocked */ }
-    if (lang !== "zh" && lang !== "en") lang = /^zh/i.test(navigator.language || "") ? "zh" : "en";
+    if (lang !== "zh" && lang !== "en") lang = "en";
     document.documentElement.dataset.lang = lang;
     document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
   })();
