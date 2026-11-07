@@ -90,7 +90,7 @@
   .link::after { content: " ›"; }
 
   /* ---------- hero ---------- */
-  .hero { position: relative; isolation: isolate; padding: clamp(150px, 20vh, 210px) 0 clamp(90px, 12vh, 130px); text-align: center; overflow: hidden; }
+  .hero { position: relative; isolation: isolate; padding: clamp(100px, 13vh, 136px) 0 clamp(26px, 3.4vh, 40px); text-align: center; overflow: hidden; }
   .hero::before { content: ""; position: absolute; left: 50%; top: 10%; width: min(1240px, 130vw); height: 600px; transform: translateX(-50%); z-index: -1;
     pointer-events: none;
     background: radial-gradient(closest-side at 30% 52%, rgba(224,51,138,.08), transparent 100%), radial-gradient(closest-side at 72% 44%, rgba(53,201,232,.10), transparent 100%); }
@@ -107,23 +107,23 @@
   .js .reveal h2 { clip-path: inset(0 0 100% 0); transform: translateY(.35em); transition: clip-path 1.2s var(--ease) .08s, transform 1.2s var(--ease) .08s; }
   .js .reveal.in h2 { clip-path: inset(-10% -5% -20% -5%); transform: none; }
   .hero-in { width: min(var(--wide), calc(100% - 2 * var(--gut))); margin: 0 auto; will-change: transform, opacity; transform-origin: 50% 30%; }
-  .kicker { margin: 0 0 28px; font: 500 12.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink2); }
+  .kicker { margin: 0 0 22px; font: 500 12.5px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink2); }
   html[data-lang="zh"] .kicker { font: 500 14px/1 var(--text); letter-spacing: .32em; }
-  .title { margin: 0; font: 600 clamp(40px, 13vw, 192px)/.9 var(--brand); letter-spacing: -0.045em; white-space: nowrap; color: var(--ink); }
+  .title { margin: 0; font: 600 clamp(40px, 9.5vw, 132px)/.9 var(--brand); letter-spacing: -0.045em; white-space: nowrap; color: var(--ink); }
   html[data-lang="zh"] .title { line-height: .9; letter-spacing: -0.045em; }
   .title .acc { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .title .ver { margin-left: .18em; font-weight: 400; color: #b0b0b6; }
-  .lede { margin: 38px auto 0; font: 500 clamp(26px, 2.9vw, 40px)/1.15 var(--display); letter-spacing: -0.02em; color: var(--ink); }
+  .lede { margin: 26px auto 0; font: 500 clamp(24px, 2.5vw, 34px)/1.15 var(--display); letter-spacing: -0.02em; color: var(--ink); }
   html[data-lang="zh"] .lede { line-height: 1.3; letter-spacing: .02em; }
-  .hero .sub { margin-top: 16px; max-width: 640px; }
-  .kpis { list-style: none; display: flex; justify-content: center; gap: clamp(30px, 6.5vw, 92px); width: min(840px, 100%); margin: 78px auto 0;
+  .hero .sub { margin-top: 12px; max-width: 780px; font-size: 19px; }
+  .kpis { list-style: none; display: flex; justify-content: center; gap: clamp(30px, 6.5vw, 92px); width: min(840px, 100%); margin: 64px auto 0;
     padding: 30px 0 0; border-top: 1px solid var(--hair); }
   .kpis li { display: flex; flex-direction: column; align-items: center; }
   .kpis b { font: 600 clamp(36px, 4vw, 54px)/1 var(--brand); letter-spacing: -0.03em; }
   .kpis span { margin-top: 10px; font: 500 12.5px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink2); }
   html[data-lang="zh"] .kpis span { font: 400 14px/1.3 var(--text); letter-spacing: .04em; }
   .kpis sup { margin-left: 2px; font-size: 9px; }
-  .cta { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 38px; }
+  .cta { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
 
   /* ---------- worlds ---------- */
   .world .head { text-align: center; }
@@ -159,7 +159,8 @@
   .js .m-stage.seen .m-side li, .js .m-stage.seen .m-side .m-meta, .js .m-stage.seen .m-side .m-h, .js .m-stage.seen .m-side .link { opacity: 1; transform: none; }
 
   /* ---------- overview: the paper's first figure ---------- */
-  .ov-card { margin: 52px auto 0; max-width: 1120px; padding: 18px; border-radius: 28px; background: #fff;
+  .overview { padding: 0 0 calc(var(--sec) * .7); }
+  .ov-card { margin: 0 auto; max-width: 1120px; padding: 18px; border-radius: 28px; background: #fff;
     border: 1px solid rgba(0,0,0,.055); box-shadow: 0 2px 6px rgba(0,0,0,.02), 0 24px 52px -28px rgba(0,0,0,.08); }
   .ov-zoom { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; }
   .ov-zoom img { display: block; width: 100%; height: auto; border-radius: 12px; }
@@ -442,27 +443,22 @@
       <a class="btn ghost" href="#diagnosis"><span class="en">How failures are diagnosed</span><span class="zh">失败怎么诊断</span></a>
       <a class="btn ghost" href="paper.pdf" target="_blank" rel="noopener"><span class="en">Read the paper</span><span class="zh">阅读论文</span></a>
     </div>
+  </div>
+</section>
+
+<!-- overview -->
+<section class="overview" id="overview">
+  <div class="wide">
+    <figure class="ov-card">
+      <button class="ov-zoom" type="button" data-zoom="thumbs/overview_full.jpg"><img src="thumbs/overview_1400.jpg" srcset="thumbs/overview_1400.jpg 1400w, thumbs/overview_full.jpg 2552w" sizes="(max-width: 1180px) 92vw, 1084px" width="1400" height="848" decoding="async" alt="Overview of Space Track: the five worlds with first-person views, one interactive episode in the renovation, and the evaluator that scores it"></button>
+      <figcaption><span class="en"><b>Five worlds, one interface.</b> Top: the five worlds, each with a first-person view. Bottom left: one interactive episode in the renovation. The agent receives the task instruction and a first-person observation, acts (here <code>demolish</code>), and the next observation shows the change it made. Bottom right: the world state and episode logs are visible only to the evaluator, whose task-specific checks produce the score, progress and success, and apply the audit checks.</span><span class="zh"><b>五个世界，一套接口。</b>上：五个世界及各自的第一人称画面。左下：旧宅翻新里的一局交互。智能体收到任务指令和第一人称观测后行动（这里是 <code>demolish</code> 拆除），下一帧观测里就能看到它造成的变化。右下：世界状态和对局日志只对评测器可见，由各任务自己的判定给出得分、完成度和是否成功，并执行审计检查。</span></figcaption>
+    </figure>
     <ul class="kpis">
       <li><b data-count="5">5</b><span><span class="en">worlds</span><span class="zh">个世界</span></span></li>
       <li><b data-count="48">48</b><span><span class="en">tasks</span><span class="zh">个任务</span><sup>1</sup></span></li>
       <li><b data-count="15">15</b><span><span class="en">control tasks</span><span class="zh">个对照任务</span><sup>1</sup></span></li>
       <li><b data-count="1">1</b><span><span class="en">shared interface</span><span class="zh">套共用接口</span></span></li>
     </ul>
-  </div>
-</section>
-
-<!-- overview -->
-<section class="overview band" id="overview">
-  <div class="wide">
-    <div class="center reveal">
-      <p class="eyebrow"><span class="en">Overview</span><span class="zh">概览</span></p>
-      <h2><span class="en">Five worlds, one interface</span><span class="zh">五个世界，一套接口</span></h2>
-      <p class="sub"><span class="en">The agent sees first-person frames and text, and acts through the same interface in every world. The world state stays with the evaluator, whose task-specific checks decide success.</span><span class="zh">智能体只看到第一人称画面和文字，在每个世界里都用同一套接口行动。世界状态只留给评测器，由各任务自己的判定决定是否成功。</span></p>
-    </div>
-    <figure class="ov-card reveal">
-      <button class="ov-zoom" type="button" data-zoom="thumbs/overview_full.jpg"><img src="thumbs/overview_1400.jpg" srcset="thumbs/overview_1400.jpg 1400w, thumbs/overview_full.jpg 2552w" sizes="(max-width: 1180px) 92vw, 1084px" width="1400" height="848" decoding="async" alt="Overview of Space Track: the five worlds with first-person views, one interactive episode in the renovation, and the evaluator that scores it"></button>
-      <figcaption><span class="en">Top: the five worlds, each with a first-person view. Bottom left: one interactive episode in the renovation. The agent receives the task instruction and a first-person observation, acts (here <code>demolish</code>), and the next observation shows the change it made. Bottom right: the world state and episode logs are visible only to the evaluator, whose task-specific checks produce the score, progress and success, and apply the audit checks.</span><span class="zh">上：五个世界及各自的第一人称画面。左下：旧宅翻新里的一局交互。智能体收到任务指令和第一人称观测后行动（这里是 <code>demolish</code> 拆除），下一帧观测里就能看到它造成的变化。右下：世界状态和对局日志只对评测器可见，由各任务自己的判定给出得分、完成度和是否成功，并执行审计检查。</span></figcaption>
-    </figure>
   </div>
 </section>
 <!-- /overview -->
@@ -966,10 +962,10 @@
 
     // ---- motion: count-up figures, a hero that recedes as you scroll, models that turn a little with the page
     if (!still) {
-      document.querySelectorAll(".kpis b[data-count]").forEach((b, i) => {
-        const n = Number(b.dataset.count), t0 = performance.now() + 250 + i * 120, dur = 1100;
-        if (n <= 1) return;
-        b.textContent = "0";
+      const kpiNums = [...document.querySelectorAll(".kpis b[data-count]")].filter((b) => Number(b.dataset.count) > 1);
+      kpiNums.forEach((b) => { b.textContent = "0"; });
+      const countUp = () => kpiNums.forEach((b, i) => {
+        const n = Number(b.dataset.count), t0 = performance.now() + 150 + i * 120, dur = 1100;
         const step = (now) => {
           const u = Math.min(1, Math.max(0, (now - t0) / dur)), e = 1 - Math.pow(1 - u, 3);
           b.textContent = String(Math.round(n * e));
@@ -977,6 +973,9 @@
         };
         requestAnimationFrame(step);
       });
+      new IntersectionObserver((es, io) => {
+        if (es.some((e) => e.isIntersecting)) { io.disconnect(); countUp(); }
+      }, { threshold: 0.5 }).observe(document.querySelector(".kpis"));
       const heroIn = document.querySelector(".hero-in"), worlds = [...document.querySelectorAll(".world")];
       const progress = document.getElementById("progress");
       let vh = window.innerHeight, maxScroll = Math.max(1, document.documentElement.scrollHeight - vh), worldBoxes = [], heroHidden = false;
