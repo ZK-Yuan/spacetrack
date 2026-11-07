@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Track · 失踪的侦探</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #120f16;
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; color: #f2eee9; }
+  #view { position: fixed; left: 0; top: 0; display: block; }
+  body.nohud .panel:not(#result) { display: none !important; }
+  .panel { position: fixed; background: rgba(20, 16, 26, .76); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(226, 192, 132, .18); border-radius: 10px; padding: 12px 14px; box-shadow: 0 8px 32px rgba(0,0,0,.45); }
+  #top { top: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; align-items: center; padding: 6px 10px; z-index: 5; }
+  #top h1 { font-size: 14px; margin: 0 8px 0 6px; white-space: nowrap; font-weight: 600; letter-spacing: .5px; color: #f7dfb2; }
+  button, a.btn, select { font: inherit; font-size: 13px; border: 0; border-radius: 7px; padding: 6px 11px; background: rgba(255,255,255,.1);
+    color: #f2eee9; cursor: pointer; white-space: nowrap; text-decoration: none; transition: background .15s; }
+  button:hover, a.btn:hover { background: rgba(255,255,255,.22); }
+  #top button.on { background: #f7dfb2; color: #1a1423; font-weight: 600; }
+  #task { top: 62px; left: 12px; width: 320px; font-size: 12.5px; line-height: 1.65; color: #e5ddd0; max-height: calc(100vh - 230px); overflow: auto; z-index: 4; }
+  #task h3 { margin: 0 0 6px; font-size: 13.5px; color: #f7dfb2; font-weight: 600; }
+  #task b { display: inline-block; width: 62px; color: #b9ad99; font-weight: 500; }
+  #task ol { margin: 6px 0 0; padding-left: 18px; }
+  #task li { margin-bottom: 3px; }
+  #task li.ok { color: #9ccc65; text-decoration: line-through; }
+  #task li.warn { color: #ffb74d; }
+  #task .note { margin: 8px 0 2px; padding: 8px 10px; border-radius: 6px; background: #efe3c8; color: #3a2a18;
+    font-family: "Kaiti SC", "STKaiti", "KaiTi", serif; font-size: 14px; line-height: 1.6; transform: rotate(-.4deg); }
+  #task .note span { display: block; font-family: "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 11px; color: #8a6d45; margin-bottom: 2px; }
+  #stats { top: 62px; right: 12px; display: flex; gap: 14px; padding: 8px 14px; z-index: 4; }
+  #stats div { text-align: center; min-width: 60px; }
+  #stats strong { display: block; font-size: 19px; color: #f7dfb2; font-weight: 600; }
+  #stats small { color: #b9ad99; font-size: 11.5px; }
+  #godwrap { right: 12px; top: 132px; padding: 8px 10px; z-index: 4; }
+  #godwrap .gh { display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: #b9ad99; margin-bottom: 5px; }
+  #god { display: block; border-radius: 6px; border: 1px solid rgba(255,255,255,.08); }
+  #aimTag { position: fixed; left: 50%; top: calc(50% + 18px); transform: translateX(-50%);
+    background: rgba(16, 12, 22, .85); border: 1px solid rgba(247, 223, 178, .35); border-radius: 999px;
+    padding: 4px 12px; font-size: 12.5px; color: #f7dfb2; pointer-events: none; display: none; z-index: 4; white-space: nowrap; }
+  #bottom { left: 50%; bottom: 14px; transform: translateX(-50%); width: min(920px, 95vw); text-align: center; padding: 10px 14px; z-index: 4; }
+  #msg { font-size: 14.5px; min-height: 22px; color: #fff; font-weight: 500; }
+  #bar { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  #bar .row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; align-items: center; }
+  #bar button.go { background: #d97706; color: #fff; }
+  #bar button.work { background: #4c3760; border: 1px solid rgba(216, 180, 254, .25); }
+  #bar button.work:hover { background: #64487e; }
+  #bar button.oracle { background: #1e566e; }
+  #bar button.stop { background: #be185d; }
+  #bar button.warn { background: #6d4c41; }
+  #bar label.num { font-size: 12.5px; color: #b9ad99; display: flex; align-items: center; gap: 4px; }
+  #bar input { width: 56px; font: inherit; font-size: 13px; padding: 5px; border-radius: 6px; border: 0; background: rgba(255,255,255,.12); color: #fff; }
+  #freebar { font-size: 12.5px; color: #d9d2c2; }
+  #hint { margin-top: 6px; font-size: 11.5px; color: #b9ad99; }
+  kbd { font: 10.5px monospace; background: rgba(255,255,255,.14); border-radius: 3px; padding: 1px 4px; margin: 0 2px; color: #f7dfb2; }
+  #result { left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(440px, 92vw); display: none; padding: 18px 20px;
+    background: rgba(18, 14, 24, .97); z-index: 9; border-color: rgba(247, 223, 178, .35); }
+  #result h2 { margin: 0 0 10px; font-size: 20px; color: #f7dfb2; }
+  #result .kv { display: grid; grid-template-columns: 112px 1fr; gap: 5px 8px; font-size: 13.5px; margin-bottom: 14px; }
+  #result .kv b { color: #b9ad99; font-weight: 500; }
+  #loading { position: fixed; inset: 0; display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 50% 42%, #241b30 0%, #100c14 100%); font-size: 17px; z-index: 10; letter-spacing: 1px; color: #f7dfb2; }
+  #loading small { font-size: 12.5px; color: #a799b7; letter-spacing: .3px; }
+  #cross { position: fixed; left: 50%; top: 50%; width: 16px; height: 16px; margin: -8px 0 0 -8px; pointer-events: none; opacity: .78; z-index: 3; }
+  #cross::before, #cross::after { content: ""; position: absolute; background: #f7dfb2; box-shadow: 0 0 4px rgba(0,0,0,.8); }
+  #cross::before { left: 7px; top: 1px; width: 2px; height: 14px; }
+  #cross::after { top: 7px; left: 1px; height: 2px; width: 14px; }
+  #cross.hit::before, #cross.hit::after { background: #69f0ae; box-shadow: 0 0 8px #69f0ae; }
+</style>
+</head>
+<body>
+<canvas id="view"></canvas>
+<div id="cross"></div>
+<div id="aimTag"></div>
+<div id="loading">
+  <div>正在载入侦探事务所…</div>
+  <small id="loadSub">解析 415 个场景网格与贴图材质</small>
+</div>
+<div class="panel" id="top">
+  <h1>Space Track · 失踪的侦探</h1>
+  <button id="modeFree">自己玩</button><button id="modeAI">AI 动作模式</button>
+  <button id="oracleStep" title="执行一步 Oracle 最优动作">AI 示范一步 <kbd>O</kbd></button>
+  <button id="oracleAll" title="自动演示完整通关流程">AI 自动通关</button>
+  <a class="btn" href="home.html">首页</a><button id="restart">重新开始 <kbd>R</kbd></button>
+</div>
+<div class="panel" id="task"></div>
+<div class="panel" id="stats">
+  <div><strong id="steps">0</strong><small>步数</small></div>
+  <div><strong id="hand">空手</strong><small>手持物</small></div>
+  <div><strong id="trace">0 件</strong><small>挪开的家具</small></div>
+</div>
+<div class="panel" id="godwrap">
+  <div class="gh"><span>事务所平面雷达</span><span>挑战模式结算后可看</span></div>
+  <canvas id="god" width="240" height="270"></canvas>
+</div>
+<div class="panel" id="bottom">
+  <div id="msg"></div>
+  <div id="bar">
+    <div class="row" id="aibar">
+      <label class="num">距离 <input id="aiDist" type="number" value="1.0" step="0.2" min="0.1"> 米</label>
+      <button data-a="walk" class="go">前进 <kbd>W</kbd></button><button data-a="back">后退 <kbd>S</kbd></button>
+      <button data-a="sideL">左移 <kbd>Q</kbd></button><button data-a="sideR">右移 <kbd>E</kbd></button>
+      <label class="num">角度 <input id="aiDeg" type="number" value="30" step="5"> °</label>
+      <button data-a="turnL">左转 <kbd>A</kbd></button><button data-a="turnR">右转 <kbd>D</kbd></button>
+      <button data-a="lookUp">抬头</button><button data-a="lookLevel">平视</button><button data-a="lookDown">低头</button>
+    </div>
+    <div class="row" id="freebar"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动 · 拖动鼠标或 <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> 观察四周 · 靠近目标对准准星后按下方动作键</div>
+    <div class="row">
+      <button data-a="inspect" class="work">调查 / 拓印 <kbd>E</kbd></button>
+      <button data-a="move_aside" class="work">挪开 / 复位家具 <kbd>M</kbd></button>
+      <button data-a="toggle_light" class="work">点亮 / 熄灭灯具 <kbd>L</kbd></button>
+      <button data-a="pick_place" class="work">拾取 / 归位器物 <kbd>G</kbd></button>
+      <button data-a="mark_anomaly" class="work">标记 / 复原 <kbd>V</kbd></button>
+      <button data-a="wait">等待 <kbd>Z</kbd></button>
+      <button data-a="look_closer">走近看 <kbd>F</kbd></button>
+      <button data-a="stop" class="stop">完工撤离 <kbd>Enter</kbd></button>
+      <button data-a="declare_impossible" class="warn">做不到 <kbd>X</kbd></button>
+    </div>
+  </div>
+  <div id="hint">动作作用于准星正前方 2.0 米内目标 · 潜入任务需在离开前将挪动过的家具与灯具复原 · <kbd>Tab</kbd> 隐藏界面</div>
+</div>
+<div class="panel" id="result"></div>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="vendor/meshopt_decoder.js"></script>
+<script src="tasks.js"></script>
+<script src="nav.js"></script>
+<script src="detective_layout.js"></script>
+<script src="detective.js"></script>
+</body>
+</html>

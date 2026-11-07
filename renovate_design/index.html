@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Track · 旧宅翻新 · 设计说明与 AI 评测</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0f0c09; color: #efe9e2; font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; }
+  main { width: min(1280px, 94vw); margin: 0 auto; padding: 28px 0 56px; }
+  a { color: #e0a96d; }
+  .back { display: inline-block; margin-bottom: 14px; font-size: 14px; }
+  .hero { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 16 / 7.4; background: #000 center 55% / cover; }
+  .hero::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(270deg, rgba(12,9,6,.95) 0%, rgba(12,9,6,.75) 40%, rgba(12,9,6,0) 66%); }
+  .hero .txt { position: absolute; right: 34px; top: 26px; bottom: 26px; width: min(540px, 58%); z-index: 1;
+    display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+  .kicker { font: 12px/1 monospace; letter-spacing: 2px; color: #a8998a; }
+  h1 { margin: 0; font-size: 38px; letter-spacing: 2px; }
+  .hero p { margin: 0; color: #d6cbc0; font-size: 14.5px; line-height: 1.8; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .stats div { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 8px 10px; }
+  .stats b { display: block; font-size: 18px; color: #e0a96d; } .stats span { font-size: 12px; color: #a8998a; }
+  .gos { display: flex; gap: 8px; flex-wrap: wrap; }
+  .go { background: #c97a2c; color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; }
+  .go.alt { background: #3e3a35; } .go.chal { background: #6d4c41; }
+  h2 { margin: 42px 0 6px; font-size: 22px; } .lead { margin: 0 0 16px; color: #a8998a; font-size: 14px; line-height: 1.75; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: #1a1511; border: 1px solid #332a22; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+  .card img { display: block; width: 100%; aspect-ratio: 16 / 9.5; object-fit: cover; cursor: zoom-in; }
+  .card .b { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card h3 { margin: 0; font-size: 17px; }
+  .card p { margin: 0; color: #cbbfb3; font-size: 13.5px; line-height: 1.7; }
+  .card .foot { margin-top: auto; padding-top: 6px; font-size: 12.5px; color: #a8998a; }
+  .wide { background: #1a1511; border: 1px solid #332a22; border-radius: 14px; overflow: hidden; }
+  .wide img { display: block; width: 100%; cursor: zoom-in; }
+  .wide .b { padding: 14px 18px; color: #cbbfb3; font-size: 13.5px; line-height: 1.7; }
+  .tasks { list-style: none; padding: 0; margin: 12px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .tasks a { display: flex; justify-content: space-between; gap: 8px; padding: 7px 10px; border-radius: 8px; background: rgba(255,255,255,.05);
+    color: #efe9e2; text-decoration: none; font-size: 13px; }
+  .tasks a:hover { background: rgba(255,255,255,.12); } .tasks a span:last-child { color: #a8998a; font-size: 12px; white-space: nowrap; }
+  .pillars { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .pillars div { background: #1a1511; border: 1px solid #332a22; border-left: 4px solid #e0a96d; border-radius: 10px; padding: 12px 14px; }
+  .pillars b { display: block; margin-bottom: 4px; } .pillars span { color: #cbbfb3; font-size: 13.5px; line-height: 1.7; }
+  .panel { background: #1a1511; border: 1px solid #332a22; border-radius: 14px; padding: 14px 18px; color: #cbbfb3; font-size: 13.5px; line-height: 1.75; }
+  .panel h3 { margin: 0 0 8px; font-size: 16px; color: #efe9e2; }
+  .panel ul { margin: 0; padding-left: 18px; } .panel li { margin: 3px 0; }
+  code { font: 12.5px monospace; color: #f3c58f; }
+  pre { margin: 10px 0 0; background: #0f0c09; border: 1px solid #332a22; border-radius: 8px; padding: 10px 12px; font: 12.5px/1.6 monospace; color: #eadbc8; overflow-x: auto; white-space: pre; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .grid4 figure { margin: 0; } .grid4 img { display: block; width: 100%; border-radius: 8px; cursor: zoom-in; }
+  .grid4 figcaption { color: #a8998a; font-size: 12px; line-height: 1.5; margin-top: 5px; }
+  .gifs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .gifs figure { margin: 0; background: #1a1511; border: 1px solid #332a22; border-radius: 12px; overflow: hidden; }
+  .gifs img { display: block; width: 100%; } .gifs figcaption { padding: 8px 12px 10px; color: #cbbfb3; font-size: 13px; line-height: 1.6; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; } td, th { border-bottom: 1px solid #332a22; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { color: #efe9e2; font-weight: 600; } td { color: #cbbfb3; }
+  .refs { background: #1a1511; border: 1px solid #332a22; border-radius: 12px; padding: 14px 18px; color: #cbbfb3; font-size: 13.5px; line-height: 1.9; }
+  .refs b { color: #e0a96d; margin-right: 6px; }
+  #lb { position: fixed; inset: 0; background: rgba(0,0,0,.92); display: none; align-items: center; justify-content: center; z-index: 9; cursor: zoom-out; overflow: auto; }
+  #lb img { max-width: 96vw; max-height: 92vh; } #lb a { position: absolute; right: 22px; top: 16px; font-size: 14px; }
+  @media (max-width: 960px) { .two, .pillars, .gifs, .grid4, .tasks { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); }
+    .hero { aspect-ratio: auto; min-height: 680px; } .hero .txt { width: auto; left: 20px; right: 20px; } }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../home.html">← 回到 Space Track 首页</a>
+  <header class="hero" style="background-image:url(img/hero.jpg)">
+    <div class="txt">
+      <div class="kicker">SPACE TRACK · 场景 E · 室内施工</div>
+      <h1>旧宅翻新</h1>
+      <p>一套六个房间的旧房，客户发来工单：保洁、刷卧室、按规则装暖气片和烟感、拆掉厨房和客厅之间的隔墙。别的场景考“空间是什么样的”，
+        这里还考“我把空间改成了什么样”：拆了墙路就变了，挪开衣柜才看得到后面的墙，做没做完没有进度条，只能自己记。</p>
+      <div class="stats"><div><b>6</b><span>个房间</span></div><div><b>9</b><span>个任务（含 4 个对照）</span></div><div><b>18</b><span>种 AI 动作</span></div><div><b>1.5 m</b><span>施工距离（准星正前方）</span></div>
+        <div><b>46</b><span>步 · 程序解刷卧室</span></div><div><b>146</b><span>步 · 程序解完整工单</span></div><div><b>10 + 40</b><span>个公开 / 私有评测种子</span></div><div><b>≈ 4 s</b><span>一帧写实画面</span></div></div>
+      <div class="gos"><a class="go" href="../renovate.html?task=sweep">开始翻新 →</a><a class="go chal" href="../renovate.html?task=sweep&amp;challenge=1">挑战模式</a>
+        <a class="go alt" href="../renovate.html?task=sweep&amp;mode=ai">AI 动作模式</a><a class="go alt" href="#eval">AI 评测接口 ↓</a></div>
+    </div>
+  </header>
+
+  <h2>两种玩法，一个身体</h2>
+  <p class="lead">照冲关模式的结构：人和模型用同一个身体模型（半径 25 cm 的圆，会和墙、家具、盆栽相撞）、同一个准星、同一套施工规则和评分。区别只在时间怎么走。</p>
+  <div class="two">
+    <div class="card"><img src="img/ui_free.jpg" data-full="img/ui_free.jpg" alt="自己玩的界面"><div class="b"><h3>自己玩 · 人</h3>
+      <p>实时操作：<code>W A S D</code> 移动（贴墙能滑过去），拖动鼠标或方向键看四周；准星对准以后按键施工：<code>C</code> 擦、<code>G</code> 捡、<code>B</code> 倒垃圾、<code>P</code> 刷、<code>H</code> 拆、<code>I</code> 装、<code>M</code> 挪家具、<code>F</code> 走近看，<code>Enter</code> 宣布完工。</p>
+      <p>挑战模式每局重新随机（见下文），结算后才能看上帝视角；完成纪录存在本机浏览器里，首页会显示“已完成 x/9”。</p>
+      <p>写实画面：页面由 <code>bench/playtest_server.py --photoreal</code> 托管时，顶栏会出现「写实画面」开关。走动时是实时画面（Cycles 烘焙的光照），一停下来，服务器就用 Cycles 渲染当前这一眼（约 4 秒），淡入盖在实时画面上；AI 动作模式下每步都会换成写实帧，和写实版评测里模型看到的一样。</p>
+      <div class="foot"><a href="img/free.gif" target="_blank">看一段自己玩的录像（GIF）↗</a></div></div></div>
+    <div class="card"><img src="img/ui_ai.jpg" data-full="img/ui_ai.jpg" alt="AI 动作模式的界面"><div class="b"><h3>AI 动作模式 · 模型（人也能试）</h3>
+      <p>世界在思考时暂停，每个动作按它耗的时间推进游戏时钟（走路 1.25 米/秒，转身 120°/秒，擦一遍 20 秒，刷一面墙 3 分钟）。动作带参数：
+        <code>walk(米)</code> <code>back(米)</code> <code>sidestep(米)</code> <code>turn(度)</code> <code>look(俯仰)</code> <code>wait(秒)</code> <code>plan([...])</code>，
+        加上 <code>clean</code> <code>pick_up</code> <code>put_down</code> <code>dispose</code> <code>paint(颜色)</code> <code>demolish</code> <code>install(件)</code> <code>move_aside</code> <code>look_closer</code> <code>stop</code> <code>declare_impossible</code> <code>give_up</code>。</p>
+      <p>每步只给一张第一视角画面和一句动作结果；步数上限 = 程序解步数 × 3 + 10。</p>
+      <div class="foot"><a href="img/demolish.gif" target="_blank">看 AI 动作模式拆墙（GIF）↗</a></div></div></div>
+  </div>
+
+  <h2>五类工单 · 每类带一个对照</h2>
+  <p class="lead">对照版只改一个变量（加提示、换成门牌、标好位置、墙已拆好），成绩差就是那个变量的作用。完整工单把前四类串在一起，顺序要自己排。</p>
+  <div class="wide"><img src="img/task_types.jpg" data-full="img/task_types.jpg" alt="任务类型卡片">
+    <div class="b">
+      <ul class="tasks">
+        <li><a href="../renovate.html?task=sweep"><span>无提示保洁</span><span>★★★</span></a></li>
+        <li><a href="../renovate.html?task=paint_rel"><span>刷卧室（卫生间隔壁那间）</span><span>★★★★</span></a></li>
+        <li><a href="../renovate.html?task=install_rule"><span>按规则安装</span><span>★★★</span></a></li>
+        <li><a href="../renovate.html?task=open_plan"><span>拆墙后走新路</span><span>★★★★★</span></a></li>
+        <li><a href="../renovate.html?task=full_order"><span>完整工单（七项）</span><span>★★★★★</span></a></li>
+        <li><a href="../renovate.html?task=sweep_hud"><span>对照 · 保洁有提示</span><span>★★</span></a></li>
+        <li><a href="../renovate.html?task=paint_plate"><span>对照 · 刷「卧室 B」</span><span>★★★</span></a></li>
+        <li><a href="../renovate.html?task=install_marked"><span>对照 · 标好位置</span><span>★★</span></a></li>
+        <li><a href="../renovate.html?task=open_plan_pre"><span>对照 · 墙已拆好</span><span>★★★★</span></a></li>
+      </ul>
+    </div></div>
+
+  <h2 id="eval">AI 评测环境</h2>
+  <p class="lead">开发时用 Python 的 <code>WebEnv</code> 直接驱动网页；正式评测用 HTTP 评测服务，模型只能通过它看到画面和文字。两种方式底下是同一个网页、同一套规则。</p>
+  <div class="pillars">
+    <div><b>每局按种子随机</b><span>户型和工单不变；污渍的位置和脏的程度、垃圾、瓷砖箱、各房间墙色、要刷的颜色（工单文字跟着改）、开局朝向都由种子决定。在一个种子上背下来的路线和脏点，换个种子就没用了。</span></div>
+    <div><b>只收程序解做得完的种子</b><span><code>make_seed_bank.py --scene renovate</code> 逐个种子跑 9 个任务的程序解，全部在步数上限内做完才收进种子库：公开 dev 每个任务 10 个（种子 1–10），私有 test 每个任务 40 个，种子号永不外传。</span></div>
+    <div><b>模型只看得到画面和文字</b><span>评测页（<code>?eval=1</code>）只暴露 <code>reset / step</code>；每步观测是一张带准星的第一视角画面、一句动作结果和步数；开局另给客户附件平面图（涂黑的是承重墙）。种子、坐标、逐步评分只写进服务端审计日志。</span></div>
+    <div><b>评分看工单，也看闯祸</b><span>每项工单算完成比例（污渍按剩余程度、刷墙按完整的墙面数、暖气片按装对的窗数……），score = 各项平均 − 违规扣分：拆错隔墙、刷了范围外的墙、多装的件、没推回的家具各扣分；砸承重墙直接 0 分。还记录 <code>false_done</code>：没做完就宣布完工。</span></div>
+    <div><b>写实画面可选</b><span>评测服务加 <code>--photoreal</code>，模型看到的就换成 Blender Cycles 按同一状态渲染的画面（扫描材质、HDRI 天空、窗户光照门户），规则和评分不变，可以比较同一个模型在两种画面下的成绩。约 4 秒一帧。</span></div>
+    <div><b>人和模型同卷</b><span>人在网页上玩挑战模式，拿到的是同样随机的局；试玩记录（每步动作、位姿、用时）可以由 <code>bench/playtest_server.py</code> 收集，直接和模型轨迹对比。</span></div>
+  </div>
+
+  <div class="two" style="margin-top:16px">
+    <div class="panel"><h3>正式评测：HTTP 评测服务</h3>
+      <pre># 1. 生成种子库（只需一次，test 部分保密）
+python3 bench/make_seed_bank.py --scene renovate --dev 10 --test 40
+
+# 2. 启动评测服务（冲关和旧宅翻新共用）
+python3 bench/eval_server.py --port 8791 --token SECRET [--photoreal]
+
+# 3. 模型一侧只用这几个接口
+POST /v1/episodes            {"scene": "renovate", "task": "paint_rel", "split": "test"}
+  -> {"episode", "card", "obs": {"frames", "text", "step", "max_steps", "task_image"}}
+POST /v1/episodes/&lt;id&gt;/step  {"action": "walk", "arg": 2.4}
+  -> {"obs", "done"[, "result": {"score", "items", "violations", "false_done", ...}]}
+DELETE /v1/episodes/&lt;id&gt;      # 中途结束，按放弃计分
+
+# 示例客户端（随机策略，换成你的模型调用即可）
+python3 bench/eval_client_example.py --scene renovate --task sweep --split dev</pre></div>
+    <div class="panel"><h3>开发调试：Python WebEnv</h3>
+      <pre>from web_env import WebEnv
+env = WebEnv("renovate", "open_plan", obs_mode="vision_only",
+             challenge=True, seed=3)          # 种子 1–10 可公开使用
+obs = env.reset()       # obs["image_png"], obs["task_image_png"]（平面图）
+obs, done, info = env.step(("turn", 90))
+obs, done, info = env.step("demolish")
+info["items"], info["violations"], info["score"]
+env.oracle_actions()    # 程序解的下一项活（只供自检）
+
+# 写实画面：同一状态交给常驻的 Blender 渲染
+env = WebEnv("renovate", "sweep", photoreal=True)
+
+# 评测模式：只有 reset / step，没有 oracle、没有 info 泄露
+env = WebEnv("renovate", "sweep", eval_mode=True, seed=7)</pre></div>
+  </div>
+
+  <div class="panel" style="margin-top:16px"><h3>任务卡里给模型的东西</h3>
+    <table>
+      <tr><th>字段</th><th>内容</th></tr>
+      <tr><td><code>intro</code> / <code>items</code></td><td>客户的话和逐项工单，例如“卫生间隔壁那间卧室四面墙刷成淡粉”“衣柜后面那面也要刷”</td></tr>
+      <tr><td><code>rules</code> / <code>actions</code></td><td>时间怎么走、准星和 1.5 米施工距离的规则；18 种动作及参数说明</td></tr>
+      <tr><td><code>colors</code> / <code>fixtures</code></td><td>可用的漆色（米白、浅灰、浅绿、天蓝、淡粉、赭石、深蓝、白色）和可装的件（暖气片、插座、烟感）</td></tr>
+      <tr><td><code>maxSteps</code></td><td>这一局的步数上限（程序解 × 3 + 10），用完判失败</td></tr>
+      <tr><td><code>task_image</code>（开局观测）</td><td>客户附件平面图：房间名、门、窗，承重墙涂黑；对照版“标好位置”会在图上标出暖气片、插座、烟感的位置</td></tr>
+    </table></div>
+
+  <h2>写实版画面</h2>
+  <p class="lead">同一个状态，左边是网页版（three.js），右边是 Blender Cycles 渲染：墙面颜色、拆掉的墙、污渍当前的深浅、挪开的家具、装上的暖气片都一样。点图看完整对照（完整工单里每种工具第一次使用后的画面）。</p>
+  <div class="two">
+    <div class="wide"><img src="img/compare.jpg" data-full="img/compare.jpg" alt="网页版和写实版对照" style="aspect-ratio:16/10;object-fit:cover;object-position:top"></div>
+    <div class="gifs" style="grid-template-columns:1fr">
+      <figure><img src="img/photoreal_paint.gif" alt="写实版刷卧室整局" loading="lazy"><figcaption>刷卧室整局的写实画面（46 步）：挪开衣柜、看到霉斑、擦掉、刷墙、推回原位。</figcaption></figure>
+    </div>
+  </div>
+  <div class="grid4" style="margin-top:12px">
+    <figure><img src="img/pr_kitchen.jpg" data-full="img/pr_kitchen.jpg" alt=""><figcaption>厨房地面：咖啡渍、纸团、易拉罐。大理石地砖让最淡的一级污渍比网页版更难找。</figcaption></figure>
+    <figure><img src="img/pr_demolish.jpg" data-full="img/pr_demolish.jpg" alt=""><figcaption>拆掉隔墙：从厨房直接看进客厅，地上落了碎渣。</figcaption></figure>
+    <figure><img src="img/pr_mold.jpg" data-full="img/pr_mold.jpg" alt=""><figcaption>挪开衣柜：后面的墙长了霉，要先擦再刷。</figcaption></figure>
+    <figure><img src="img/pr_final.jpg" data-full="img/pr_final.jpg" alt=""><figcaption>完工：窗下装好暖气片，墙刷成浅绿。</figcaption></figure>
+  </div>
+
+  <h2>公平、可复现、堵住捷径</h2>
+  <div class="pillars">
+    <div><b>看得见才做得到</b><span>所有施工都作用于准星正前方 1.5 米内的东西，要先走到跟前、转过去、调好俯仰；画面中心画着和人看到的同一个准星。</span></div>
+    <div><b>没有进度条</b><span>不显示剩余污渍、没有高亮、没有小地图；“有提示”的对照版才在文字里告诉你这个房间还剩几处。宣布完工时没做完的会记 <code>false_done</code>。</span></div>
+    <div><b>指代要自己解析</b><span>工单说“卫生间隔壁那间卧室”而不是房间名；对照版改成看门牌“卧室 B”。刷错房间算范围外，扣分。</span></div>
+    <div><b>程序解当满分参考</b><span>网页自带的程序解在连续空间里规划：10 cm 栅格上找路，再算出站在哪、朝哪、俯仰多少度能让准星正对目标；站位要求朝向偏 1.5° 也照样打得中，不会卡在边缘上。</span></div>
+  </div>
+
+  <h2>参考</h2>
+  <div class="refs"><b>游戏</b>House Flipper（2018）· PowerWash Simulator（2022）：清洁、刷墙、拆墙的施工手感<br>
+    <b>评测</b>ALFRED、TEACh、Habitat Rearrangement：家务和重排任务，但 agent 不改变房屋结构；本场景让 agent 亲手改连通性和地标<br>
+    <b>文件</b>web/renovate.html · web/renovate.js（规则、程序解、AI 接口、种子随机）· renovate/layout.py（唯一的布局数据）· blender/renovate_photoreal.py · bench/photoreal.py · bench/eval_server.py · bench/make_seed_bank.py · bench/web_env.py</div>
+</main>
+<div id="lb"><a target="_blank">打开原图 ↗</a><img alt=""></div>
+<script>
+  const lb = document.getElementById("lb"), lbImg = lb.querySelector("img"), lbA = lb.querySelector("a");
+  document.querySelectorAll("img[data-full]").forEach((im) => im.addEventListener("click", () => {
+    lbImg.src = im.dataset.full; lbA.href = im.dataset.full; lb.style.display = "flex";
+  }));
+  lb.addEventListener("click", (ev) => { if (ev.target !== lbA) lb.style.display = "none"; });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") lb.style.display = "none"; });
+</script>
+</body>
+</html>

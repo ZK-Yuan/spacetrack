@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>雾岭疗养院（夜）· Space Track 恐怖模式</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; color: #e9e4d8;
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; }
+  #view canvas { display: block; }
+  .ov { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 20; }
+  .hide { display: none !important; }
+  #loading { background: #050607; flex-direction: column; gap: 14px; }
+  #loading h1 { font-weight: 600; letter-spacing: 8px; margin: 0; font-size: 34px; color: #d9d2c2; }
+  #bar { width: 320px; height: 3px; background: #1c1f22; } #bar i { display: block; height: 100%; width: 0; background: #b9a27a; transition: width .2s; }
+  #lmsg { color: #7d8790; font-size: 13px; }
+  #menu { background: radial-gradient(ellipse at 30% 40%, rgba(20,26,32,.55), rgba(0,0,0,.92)); }
+  #menu .box { width: min(760px, 92vw); display: grid; grid-template-columns: 1.25fr 1fr; gap: 28px; align-items: start; }
+  #menu h1 { margin: 0 0 4px; font-size: 40px; letter-spacing: 6px; font-weight: 600; }
+  #menu .sub { color: #8f989f; font-size: 13px; letter-spacing: 2px; margin-bottom: 18px; }
+  #menu p { color: #c9c2b4; line-height: 1.9; font-size: 14.5px; margin: 0 0 12px; }
+  #menu .keys { font-size: 13px; color: #aab1b6; line-height: 2.0; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 10px; padding: 12px 16px; }
+  kbd { font: 11px monospace; background: rgba(255,255,255,.12); border-radius: 3px; padding: 1px 6px; color: #eee; margin-right: 4px; }
+  .btn { display: inline-block; margin-top: 10px; padding: 12px 26px; border: 1px solid #b9a27a; color: #f3e6c8; background: rgba(185,162,122,.12);
+    border-radius: 6px; font-size: 16px; letter-spacing: 3px; cursor: pointer; }
+  .btn:hover { background: rgba(185,162,122,.28); }
+  .btn.alt { border-color: #4a5258; color: #aab1b6; background: transparent; font-size: 13px; letter-spacing: 1px; padding: 8px 16px; }
+  select { background: #111; color: #ccc; border: 1px solid #333; border-radius: 4px; padding: 4px 8px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; font-size: 13px; color: #8f989f; }
+  #hud { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+  #obj { position: absolute; left: 22px; top: 18px; max-width: 460px; font-size: 14px; line-height: 1.7; color: #d8d1c2;
+    text-shadow: 0 0 6px #000, 0 0 2px #000; transition: opacity .6s; }
+  #obj b { color: #e9c98d; font-weight: 600; letter-spacing: 1px; display: block; font-size: 12px; opacity: .8; }
+  #loc { position: absolute; left: 0; right: 0; top: 70px; text-align: center; font-size: 18px; letter-spacing: 6px; color: #cfc6b2;
+    text-shadow: 0 0 10px #000; opacity: 0; transition: opacity 1.2s; }
+  #prompt { position: absolute; left: 0; right: 0; bottom: 16%; text-align: center; font-size: 15px; color: #efe6d0; text-shadow: 0 0 6px #000; }
+  #msg { position: absolute; left: 0; right: 0; bottom: 22%; text-align: center; font-size: 16px; color: #e6dcc6; text-shadow: 0 0 8px #000, 0 0 3px #000;
+    transition: opacity .5s; padding: 0 20%; line-height: 1.8; }
+  #cross { position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; border-radius: 50%; background: rgba(255,255,255,.45); }
+  #stam { position: absolute; left: 50%; bottom: 7%; width: 180px; margin-left: -90px; height: 3px; background: rgba(255,255,255,.08); transition: opacity .4s; }
+  #stam i { display: block; height: 100%; width: 100%; background: #c9b991; }
+  #eye { position: absolute; left: 50%; top: 22px; margin-left: -22px; width: 44px; height: 22px; opacity: 0; transition: opacity .3s; }
+  #inv { position: absolute; right: 22px; bottom: 20px; display: flex; gap: 8px; }
+  #inv span { font-size: 12px; padding: 5px 9px; border: 1px solid rgba(233,201,141,.35); color: #e9c98d; border-radius: 4px; background: rgba(0,0,0,.4); }
+  #flash { position: absolute; right: 22px; top: 18px; font-size: 12px; color: #8f989f; text-shadow: 0 0 4px #000; }
+  #note { background: rgba(0,0,0,.72); z-index: 30; }
+  #note .paper { width: min(520px, 90vw); background: #e6dcc0; color: #2b241a; padding: 30px 34px; border-radius: 3px;
+    box-shadow: 0 10px 50px rgba(0,0,0,.7); font-family: "Songti SC", "SimSun", serif; line-height: 2.0; font-size: 16px; transform: rotate(-0.8deg); }
+  #note h2 { margin: 0 0 12px; font-size: 18px; } #note small { display: block; margin-top: 16px; color: #6b5f4a; font-family: sans-serif; font-size: 12px; }
+  #mapv { background: rgba(0,0,0,.8); z-index: 30; flex-direction: column; gap: 10px; } #mapv canvas { border-radius: 4px; box-shadow: 0 10px 40px #000; }
+  #mapv div { color: #8f989f; font-size: 13px; }
+  #hideov { pointer-events: none; z-index: 12; background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.94) 0, rgba(0,0,0,.94) 26px, rgba(0,0,0,0) 26px, rgba(0,0,0,0) 34px); }
+  #hideov::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 30%, rgba(0,0,0,.85) 80%); }
+  #dead, #win, #pause { background: rgba(0,0,0,.86); z-index: 40; flex-direction: column; text-align: center; gap: 8px; }
+  #dead h1 { color: #a33; letter-spacing: 10px; font-size: 42px; margin: 0; font-weight: 600; }
+  #win h1 { letter-spacing: 8px; font-size: 36px; margin: 0; font-weight: 600; color: #d9cfb6; }
+  #dead p, #win p, #pause p { color: #b9b1a1; max-width: 560px; line-height: 1.9; }
+  .stats { color: #8f989f; font-size: 13px; }
+  #err { position: fixed; left: 10px; bottom: 10px; color: #f88; font: 12px monospace; z-index: 99; white-space: pre; }
+</style>
+</head>
+<body>
+<div id="view"></div>
+<div id="loading" class="ov"><h1>雾岭疗养院</h1><div id="bar"><i></i></div><div id="lmsg">准备中…</div></div>
+<div id="menu" class="ov hide">
+  <div class="box">
+    <div>
+      <h1>雾岭疗养院（夜）</h1>
+      <div class="sub">SPACE TRACK · 恐怖模式 · 场景 S</div>
+      <p>1934 年的肺结核疗养院，1992 年在坡上加建新楼，2003 年停用。今晚起雾了。妹妹和朋友进来拍探险视频，最后一条短信说她躲在 <b>307</b>。</p>
+      <p>夜班护士长还在巡房。她提着灯，听得见你跑步和开门，看得见你的手电光。她不会瞬移，也进不了礼拜堂和广播室。你能依靠的，只有对这栋楼的空间理解。</p>
+      <div><span class="btn" id="start">进入疗养院</span></div>
+      <div class="row">画质 <select id="quality"><option value="high">高（阴影 + 抗锯齿）</option><option value="mid" selected>中</option><option value="low">低（无阴影）</option></select>
+        <a class="btn alt" href="index.html">← 设计图纸</a></div>
+    </div>
+    <div class="keys">
+      <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动　鼠标 转头<br>
+      <kbd>Shift</kbd> 跑（有体力限制，声音大）<br>
+      <kbd>C</kbd> 蹲下（慢，几乎没声音）<br>
+      <kbd>F</kbd> 手电开关（她 30 米外就能看到光）<br>
+      <kbd>E</kbd> 开门 / 拾取 / 阅读 / 躲进柜子<br>
+      <kbd>空格</kbd> 躲藏时屏住呼吸<br>
+      <kbd>M</kbd> 地图（你只有一张 1934 年的旧图）<br>
+      <kbd>Esc</kbd> 暂停<br><br>
+      暖色的光只属于她；绿色的灯是安全屋。<br>建议戴耳机：她的脚步声和哼歌都是真实距离。
+    </div>
+  </div>
+</div>
+<div id="hud" class="hide">
+  <div id="obj"></div><div id="loc"></div><div id="msg"></div><div id="prompt"></div><div id="cross"></div>
+  <div id="stam"><i></i></div><div id="inv"></div><div id="flash"></div>
+  <svg id="eye" viewBox="0 0 44 22"><path d="M2 11 Q22 -6 42 11 Q22 28 2 11 Z" fill="none" stroke="#e9c98d" stroke-width="2"/><circle id="eyeball" cx="22" cy="11" r="5" fill="#e9c98d"/></svg>
+</div>
+<div id="hideov" class="ov hide"></div>
+<div id="note" class="ov hide"><div class="paper"><h2 id="ntitle"></h2><div id="ntext"></div><small>按 E 或 Esc 放下</small></div></div>
+<div id="mapv" class="ov hide"><canvas id="mapc" width="760" height="560"></canvas><div>这是 1934 年的旧图：上面没有 1992 年的新楼。按 M 关闭</div></div>
+<div id="dead" class="ov hide"><h1>她找到你了</h1><p id="deadtxt"></p><span class="btn" id="retry">从最近的安全屋重来</span><span class="btn alt" id="restart">从头开始</span></div>
+<div id="win" class="ov hide"><h1 id="wintitle">逃出雾岭</h1><p id="wintxt"></p><div class="stats" id="winstats"></div><span class="btn alt" id="again">再来一次</span> <a class="btn alt" href="index.html">← 设计图纸</a></div>
+<div id="pause" class="ov hide"><h1 style="letter-spacing:8px;font-weight:600">暂停</h1><p id="pausetxt"></p><span class="btn" id="resume">继续</span><span class="btn alt" id="pmap">看地图</span></div>
+<div id="err"></div>
+<script src="../vendor/three.min.js"></script>
+<script src="../vendor/GLTFLoader.js"></script>
+<script src="game/engine.js"></script>
+<script src="game/walk.js"></script>
+<script src="game/level.js"></script>
+<script src="game/props.js"></script>
+<script src="game/actors.js"></script>
+<script src="game/audio.js"></script>
+<script src="game/ai.js"></script>
+<script src="../nav.js"></script>
+<script src="game/aimode.js"></script>
+<script src="game/main.js"></script>
+</body>
+</html>

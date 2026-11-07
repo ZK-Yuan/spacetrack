@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Track · 雾岭疗养院（夜）</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0b0f12; color: #e8eef2; font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; }
+  main { width: min(1280px, 94vw); margin: 0 auto; padding: 28px 0 56px; }
+  a { color: #ffb24d; }
+  .hero { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 16 / 7.2; background: #000 center 62% / cover; }
+  .hero::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(270deg, rgba(5,8,10,.94) 0%, rgba(5,8,10,.66) 36%, rgba(5,8,10,0) 62%); }
+  .hero .txt { position: absolute; right: 36px; top: 30px; bottom: 30px; width: min(500px, 58%); z-index: 1;
+    display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+  .kicker { font: 12px/1 monospace; letter-spacing: 2px; color: #8fa1ad; }
+  h1 { margin: 0; font-size: 40px; letter-spacing: 2px; }
+  .hero p { margin: 0; color: #c5d0d7; font-size: 15px; line-height: 1.8; }
+  .play { align-self: flex-start; margin-top: 6px; padding: 11px 22px; border: 1px solid #ffb24d; border-radius: 8px; color: #fff3dc;
+    background: rgba(255,178,77,.16); text-decoration: none; font-size: 16px; letter-spacing: 2px; }
+  .play:hover { background: rgba(255,178,77,.3); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 6px; }
+  .stats div { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 8px 10px; }
+  .stats b { display: block; font-size: 19px; color: #ffb24d; } .stats span { font-size: 12px; color: #8fa1ad; }
+  h2 { margin: 40px 0 6px; font-size: 22px; } .lead { margin: 0 0 16px; color: #8fa1ad; font-size: 14px; line-height: 1.7; }
+  .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .playwrap { display: grid; grid-template-columns: 1.45fr 1fr; gap: 16px; align-items: stretch; }
+  .bigplay { position: relative; display: block; border-radius: 14px; overflow: hidden; border: 1px solid #25313a; }
+  .bigplay img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; }
+  .bigplay span { position: absolute; left: 22px; bottom: 20px; padding: 12px 24px; border: 1px solid #ffb24d; border-radius: 8px;
+    color: #fff3dc; background: rgba(10,8,6,.62); font-size: 18px; letter-spacing: 2px; }
+  .bigplay:hover span { background: rgba(255,178,77,.3); }
+  .howto { background: #131a20; border: 1px solid #25313a; border-radius: 14px; padding: 14px 18px; font-size: 13.5px; line-height: 1.75; color: #b9c6ce; }
+  .howto h3 { margin: 4px 0 4px; font-size: 15px; color: #e8eef2; } .howto ul { margin: 0 0 6px; padding-left: 18px; }
+  .howto kbd { font: 11px monospace; background: rgba(255,255,255,.12); border-radius: 3px; padding: 1px 5px; color: #eee; }
+  .playshots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 14px; }
+  .playshots figure { margin: 0; background: #131a20; border: 1px solid #25313a; border-radius: 12px; overflow: hidden; }
+  .playshots img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; cursor: zoom-in; }
+  .playshots figcaption { padding: 8px 10px 10px; font-size: 12.5px; line-height: 1.6; color: #b9c6ce; }
+  .aitable { margin-top: 14px; background: #131a20; border: 1px solid #25313a; border-radius: 14px; padding: 14px 18px; font-size: 13.5px; color: #b9c6ce; line-height: 1.7; }
+  .aitable h3 { margin: 0 0 6px; font-size: 15px; color: #e8eef2; }
+  .aitable table { width: 100%; border-collapse: collapse; margin: 6px 0 8px; }
+  .aitable td, .aitable th { text-align: left; padding: 5px 8px; border-bottom: 1px solid #25313a; font-size: 13px; }
+  .aitable th { color: #8fa1ad; font-weight: 500; } .aitable td b { color: #ffb24d; }
+  .aitable code { font: 12px monospace; background: rgba(255,255,255,.07); padding: 1px 5px; border-radius: 4px; color: #d8e2e8; }
+  .card { background: #131a20; border: 1px solid #25313a; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+  .card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; cursor: zoom-in; }
+  .card .b { padding: 12px 14px 14px; }
+  .card h3 { margin: 0 0 6px; font-size: 17px; } .card p { margin: 0 0 8px; color: #b9c6ce; font-size: 13.5px; line-height: 1.65; }
+  .card ol { margin: 0; padding-left: 18px; color: #b9c6ce; font-size: 13px; line-height: 1.6; } .card li b { color: #e8eef2; }
+  .sheets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .sheets .card img { aspect-ratio: 16 / 9.4; object-position: top; }
+  .tag { font: 11px monospace; color: #0b0f12; background: #ffb24d; border-radius: 4px; padding: 1px 6px; margin-right: 6px; }
+  .pillars { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .pillars div { background: #131a20; border: 1px solid #25313a; border-left: 4px solid #ffb24d; border-radius: 10px; padding: 12px 14px; }
+  .pillars b { display: block; margin-bottom: 4px; } .pillars span { color: #b9c6ce; font-size: 13.5px; line-height: 1.65; }
+  .refs { background: #131a20; border: 1px solid #25313a; border-radius: 12px; padding: 14px 18px; color: #b9c6ce; font-size: 13.5px; line-height: 1.9; }
+  .refs b { color: #4fd6e8; margin-right: 6px; }
+  .back { display: inline-block; margin-bottom: 14px; font-size: 14px; }
+  #lb { position: fixed; inset: 0; background: rgba(0,0,0,.92); display: none; align-items: center; justify-content: center; z-index: 9; cursor: zoom-out; }
+  #lb img { max-width: 96vw; max-height: 92vh; } #lb a { position: absolute; right: 22px; top: 16px; font-size: 14px; }
+  @media (max-width: 900px) { .shots, .sheets, .pillars, .playwrap, .playshots { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../home.html">← 回到 Space Track 首页</a>
+  <header class="hero" style="background-image:url(img/rotunda.jpg)">
+    <div class="txt">
+      <div class="kicker">SPACE TRACK · 恐怖模式 · 场景 S</div>
+      <h1>雾岭疗养院（夜）</h1>
+      <p>1934 年的肺结核疗养院建在雾岭南坡，1992 年在坡上加建新楼，2003 年停用。夜里起雾，你来找失联的妹妹，而夜班护士长还在巡房。
+        她会听、会看、会搜柜子，但规则公开、可预测；你唯一的武器是对这栋楼的空间理解。</p>
+      <div class="stats"><div><b>4</b><span>楼栋</span></div><div><b>B1–6F</b><span>楼层</span></div><div><b>33</b><span>独立环路</span></div><div><b>19</b><span>藏身点</span></div><div><b>18 → 3</b><span>开局 / 后期瓶颈</span></div><div><b>37</b><span>死胡同</span></div><div><b>550 m</b><span>关键路线</span></div><div><b>8.4 分钟</b><span>关键路线用时</span></div></div>
+      <a class="play" href="play.html">进入可玩版本 →</a>
+    </div>
+  </header>
+
+  <h2>可玩版本 · 第一人称</h2><p class="lead">同一份地图数据编译成可以走、可以被追的 3D 关卡：门洞由导航边自动切出，护士长走的就是图纸上那张导航图。贴图和模型全部来自 Poly Haven（CC0），声音实时合成。</p><div class="playwrap"><a class="bigplay" href="play.html"><img src="img/play_corridor.jpg" alt=""><span>进入可玩版本 →</span></a><div class="howto"><h3>目标</h3>找到躲在 <b>307</b> 的妹妹，再带她离开。正门要院长办公室（新楼 6F）的钥匙；后门是电动门，得先拿到旧手术室的保险丝，从太平间的运尸隧道下山修好锅炉房的配电柜。<h3>操作</h3><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动 · 鼠标转头 · <kbd>Shift</kbd> 跑 · <kbd>C</kbd> 蹲 · <kbd>F</kbd> 手电 · <kbd>E</kbd> 开门 / 拾取 / 阅读 / 躲进柜子 · <kbd>空格</kbd> 躲藏时屏住呼吸 · <kbd>M</kbd> 旧地图 · <kbd>Esc</kbd> 暂停<h3>她的规则</h3><ul><li>脚步声和哼歌都是真实距离，她听声音也按走路距离算，铅墙后面听不见</li><li>开着手电，30 米外就能看见你；关掉手电要靠记忆走</li><li>看见你躲进哪个柜子，就会把你拉出来；离你很近时要屏住呼吸</li><li>进不了礼拜堂和广播室，进去会自动存档</li><li>压迫计满了会钻进送餐井，过一阵从你前方、但不在视野里的井口出来</li></ul>建议用电脑版 Chrome / Edge，戴耳机；画面卡就在开始菜单选「低」画质。</div></div><div class="playshots"><figure><img src="img/play_matron.jpg" data-full="img/play_matron.jpg" alt=""><figcaption>夜班护士长：Blender 建模、布料模拟的长裙，提着全图唯一的暖光。</figcaption></figure><figure><img src="img/play_rotunda.jpg" data-full="img/play_rotunda.jpg" alt=""><figcaption>圆厅：从二楼回廊往下看，她在停摆的座钟旁边巡房。</figcaption></figure><figure><img src="img/play_room307.jpg" data-full="img/play_room307.jpg" alt=""><figcaption>新楼 307：妹妹缩在铁床上。</figcaption></figure><figure><img src="img/play_courtyard.jpg" data-full="img/play_courtyard.jpg" alt=""><figcaption>庭院：枯树、空中连廊和坡上的新楼。</figcaption></figure><figure><img src="img/play_tunnel.jpg" data-full="img/play_tunnel.jpg" alt=""><figcaption>运尸隧道：灯泡每三个坏一个，她也走这条路。</figcaption></figure></div><div class="aitable"><h3>AI 动作模式（给模型评测用）</h3>和公园、商场、山城同一套动作：<code>forward</code> 走到下一个路口 / 门 / 楼梯 / 物品，<code>turn_left</code> / <code>turn_right</code> 转 45°，<code>turn_around</code>，另加 <code>interact</code>（拾取、叫醒、装保险丝、读纸条、躲进柜子）、<code>run</code>、<code>wait(s)</code>、<code>flashlight</code>、<code>stop</code>（到了目的地）和 <code>declare_impossible(原因)</code>。两步之间世界暂停，每一步按实际耗时推进，护士长照常巡逻、听声、追人。最优步数是 oracle 的动作数（掉头算 1 步）；最后一列是护士长活动时只管照最优路线赶路，8 个随机种子里有几次活着完成。<table><tr><th>任务</th><th>路线</th><th>最优步数</th><th>步数上限</th><th>只管赶路（8 个种子）</th></tr><tr><td>找到妹妹 <code>sister</code></td><td>围墙破洞 → 新楼 307，叫醒她</td><td><b>32</b></td><td>75</td><td>8/8</td></tr><tr><td>拿到保险丝 <code>fuse</code></td><td>围墙破洞 → 旧手术室（换种子会换成 X 光室或新楼 B1 的洗衣房）</td><td><b>19</b></td><td>45</td><td>8/8</td></tr><tr><td>带妹妹从后门离开 <code>escape</code></td><td>307 → 太平间 → 运尸隧道 → 锅炉房装保险丝 → 后门</td><td><b>24</b></td><td>60</td><td>1/8，多在第 11 步被抓</td></tr><tr><td>带妹妹从正门离开 <code>escape_main</code></td><td>307 → 院长办公室拿钥匙 → 圆厅正门 → 车道</td><td><b>45</b></td><td>115</td><td>0/8，多在第 11 步被抓</td></tr><tr><td>全程（挑战） <code>full</code></td><td>保险丝 → 妹妹 → 隧道 → 来电 → 后门</td><td><b>72</b></td><td>170</td><td>0/8，第 53–55 步被抓</td></tr><tr><td>妹妹的手机 <code>phone</code></td><td>围墙破洞 → 老楼走到底，爬 A1 楼梯上 3F 晒台捡手机。A2 楼梯 2F 以上砌死，圆厅的插销门只能从病区一侧打开</td><td><b>34</b></td><td>75</td><td>8/8</td></tr><tr><td>档案室的病历 <code>records</code></td><td>B1 隧道口 → 太平间拿钥匙（换种子会换成洗衣房或急诊） → 东梯上 2F → 连廊到圆厅 3F → 下一层 → 服务翼 2F 档案室。错层：新楼 2F 和老楼 3F 一样高</td><td><b>31</b></td><td>70</td><td>7/8</td></tr><tr><td>走后山回小教堂 <code>hill</code></td><td>锅炉房 → 后山小门 → 石阶 → 山顶铁门（只能从山路一侧推开）→ 小教堂，到了 stop</td><td><b>14</b></td><td>35</td><td>8/8</td></tr><tr><td>四楼的值班记录（做不到） <code>floor4</code></td><td>4F 楼梯间的门被烧死，西梯只到 3F，电梯没电。要先亲眼看到烧坏的门，再用 declare_impossible 说出「4F」和「烧 / 封 / 打不开」</td><td><b>8</b></td><td>30</td><td>8/8</td></tr><tr><td>五楼的更衣柜（floor4 的对照） <code>floor5</code></td><td>同一部东梯经过烧坏的 4F 继续上 5F，躲进职工更衣室的柜子；在这里说做不到算错</td><td><b>14</b></td><td>40</td><td>8/8</td></tr><tr><td>绿色出口线 <code>exit_sign</code></td><td>带妹妹出新楼：绿线通向锁死的北门，真正的出口是急诊的救护车门（只能从里面推开）→ 庭院喷泉，到了 stop</td><td><b>12</b></td><td>30</td><td>8/8</td></tr><tr><td>甩掉护士长 <code>evade</code></td><td>她在 28 米外追来：掉头跑，拔开插销门进圆厅 2F 的广播室，撑满 60 秒。原地等、走着去、当着她的面躲柜子都会被抓</td><td><b>10</b></td><td>25</td><td>8/8</td></tr><tr><td>照片里的房间 <code>photo</code></td><td>只给一张照片：X 光室（换种子会换成广播室、职工宿舍或厨房）。找到拍照的位置，到了 stop</td><td><b>26</b></td><td>60</td><td>8/8</td></tr><tr><td>原路返回 <code>homing</code></td><td>围墙破洞 → 旧手术室拿保险丝（位置随种子变）→ 回到围墙破洞，到了 stop</td><td><b>38</b></td><td>85</td><td>8/8</td></tr></table>Python：<code>WebEnv("sanatorium", "escape", base_url="http://127.0.0.1:8766")</code>；photo 的照片在 reset 时给出（<code>obs["task_image_png"]</code>）。浏览器里打开 <code>play.html?ai=1&amp;task=escape</code> 可以看任务卡，<code>oracle()</code> 给出最优动作序列。</div>
+  <h2>三个代表性空间</h2>
+  <p class="lead">按地图规格程序化搭建，CC0 贴图 + Blender Cycles 体积雾。画面里的每个元素都对应一条玩法规则。点图片看大图。</p>
+  <div class="shots"><div class="card"><img src="img/rotunda.jpg" data-full="img/rotunda.jpg" alt=""><div class="b"><h3>圆厅 · 全图中枢</h3><p>三层圆厅、两圈回廊和一座大旋梯：所有区域都从这里分出去，也都会绕回这里。</p><ol><li><b>箱庭中枢（参考《生化危机2 重制版》警察局大厅）</b>：你总能看到下一个目标（楼上的门、旋梯顶的出口），但要绕一圈才走得到；每拿到一把钥匙，回到这里就多一条路。</li><li><b>站得高能看清，站在亮处会暴露</b>：从回廊往下看能确认她在哪；天窗投下的月光圈是大厅里唯一被照亮的地面，走进去就会被看见。</li><li><b>光的语言</b>：冷色月光从穹顶天窗垂直落下；她的提灯是全图唯一的暖光。看到暖光，就知道她在哪。</li></ol></div></div><div class="card"><img src="img/corridor.jpg" data-full="img/corridor.jpg" alt=""><div class="b"><h3>老楼病区 · 长走廊</h3><p>76 m × 2.6 m，一侧 16 间病房，一侧铁栏窗；平面参考 Paimio 疗养院的折线布局，相邻两段走廊不成直角。</p><ol><li><b>视线长，就有时间做决定（参考《寂静岭》医院、《逃生》）</b>：提灯在 20–30 m 外就能看到，你有几秒钟选择：退回去、躲进病房，还是从晒台绕过去。</li><li><b>环路藏在房间里</b>：3/7/11/15 号房有门通晒台，走廊和晒台连成环路；5/13 号房有衣柜可躲。直走廊本身是陷阱：两头都被堵就无路可退。</li><li><b>节奏</b>：每扇窗在地上投一块月光，明暗交替像节拍器；她的提灯会先在旧亚麻地板上映出暖色反光，然后她本人才出现。</li></ol></div></div><div class="card"><img src="img/tunnel.jpg" data-full="img/tunnel.jpg" alt=""><div class="b"><h3>运尸隧道 · 下山捷径</h3><p>参考 Waverly Hills 疗养院真实存在的运尸道：从 B1 太平间斜着穿过山体，通到山下锅炉房。</p><ol><li><b>离安全屋最远的一段</b>：约 150 m 长，平均坡度约 10%，一侧是铁轨，一侧是长台阶；中途只有 2 个避车洞可以躲。</li><li><b>明暗节奏</b>：每三个灯泡坏一个，留出一段段黑暗；她站在暗处时被身后的灯照成剪影：你先看到轮廓，再看到提灯。</li><li><b>会说话的道具</b>：轨道上停着盖白布的运尸车：既挡住一部分视线，也不用任何文字就交代了这条隧道过去的用途。</li></ol></div></div></div>
+
+  <h2>设计图纸</h2>
+  <p class="lead">所有图纸都由同一份地图数据（sketches/sanatorium_map.py）画出，环路、瓶颈、离安全屋的距离都是自动算的。</p>
+  <div class="sheets"><div class="card"><img src="img/S1_t.jpg" data-full="img/S1.jpg" alt=""><div class="b"><h3><span class="tag">S1</span>总览</h3><p>轴测鸟瞰、地形、四栋楼和下山路线；设计支柱与关键数字。</p></div></div><div class="card"><img src="img/S2_t.jpg" data-full="img/S2.jpg" alt=""><div class="b"><h3><span class="tag">S2</span>老楼 / 圆厅 / 服务翼平面</h3><p>1934 年的三段式布局，环路、巡逻路线、单向门和藏身点。</p></div></div><div class="card"><img src="img/S3_t.jpg" data-full="img/S3.jpg" alt=""><div class="b"><h3><span class="tag">S3</span>1992 新楼平面 + 剖面</h3><p>错层连廊、只停四层的电梯、火灾封闭的 4F，以及真实比例的南北剖面。</p></div></div><div class="card"><img src="img/S4_t.jpg" data-full="img/S4.jpg" alt=""><div class="b"><h3><span class="tag">S4</span>流程、路线与节奏</h3><p>钥匙和供电怎样一层层打开地图；预期紧张度与实测的安全屋距离。</p></div></div><div class="card"><img src="img/S5_t.jpg" data-full="img/S5.jpg" alt=""><div class="b"><h3><span class="tag">S5</span>护士长 AI 与空间分析</h3><p>状态机、按步行距离计算的听觉、压迫计，以及自动算出的瓶颈和环路。</p></div></div><div class="card"><img src="img/S6_t.jpg" data-full="img/S6.jpg" alt=""><div class="b"><h3><span class="tag">S6</span>氛围概念渲染</h3><p>三张渲染、光与颜色的规则、实测配色和素材来源。</p></div></div></div>
+
+  <h2>设计支柱</h2>
+  <div class="pillars"><div><b>建筑先于关卡</b><span>参考帕伊米奥疗养院（翼楼 20° / 45° 斜接、南向晒台层层叠起）和韦弗利山疗养院的运尸隧道：真实的建筑逻辑自带地标和迷路点。</span></div><div><b>箱庭 + 中心大厅</b><span>参考《生化危机2 重制版》警察局：圆厅是枢纽，单向门从另一侧打开后变成回枢纽的捷径。开局像一棵树（18 个瓶颈），后期织成一张网（只剩 3 个）。</span></div><div><b>看得见、听得见的威胁</b><span>参考暴君 X 和《异形：隔离》：提灯光、哼歌和鞋跟声都是真实距离线索；她进不了安全屋；压迫计到顶就钻进送餐井退场，给你喘息。</span></div><div><b>空间认知 = 生存技能</b><span>环路还是死胡同、单向门、错层连廊、旧版平面图、两栋楼都有 307：Space Track 的每个陷阱在这里都关乎生死。</span></div></div>
+
+  <h2>参考与素材</h2>
+  <div class="refs"><b>游戏</b>《生化危机2 重制版》（2019）警察局箱庭与暴君 X · 《异形：隔离》（2014）两个大脑的 AI 与压迫计 · 《逃生》（2013）躲柜 · 《寂静岭》医院与雾 · 《黑暗之魂》（2011）单向捷径<br><b>建筑</b>Paimio 疗养院（Alvar Aalto，1933）· Waverly Hills 疗养院的运尸道<br><b>贴图</b>Poly Haven，CC0 1.0（可商用、无需署名），11 套 2K PBR，清单见 assets/textures/SOURCES.json<br><b>待接入</b>SFXMint / Lots of Sounds 的 CC0 恐怖音效、Kenney 家具模型；可玩的网页版和 Python 环境还没做</div>
+</main>
+<div id="lb"><a target="_blank">打开原图 ↗</a><img alt=""></div>
+<script>
+  const lb = document.getElementById("lb"), lbImg = lb.querySelector("img"), lbA = lb.querySelector("a");
+  document.querySelectorAll("img[data-full]").forEach((im) => im.addEventListener("click", () => {
+    lbImg.src = im.dataset.full; lbA.href = im.dataset.full; lb.style.display = "flex";
+  }));
+  lb.addEventListener("click", (e) => { if (e.target !== lbA) lb.style.display = "none"; });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") lb.style.display = "none"; });
+</script>
+</body>
+</html>

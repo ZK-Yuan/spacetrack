@@ -1,0 +1,29 @@
+/* model3d.js viewer chrome: the canvas is transparent, so the model sits straight on the page */
+.m3d { position: relative; overflow: hidden; }
+.m3d-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; outline: none; }
+.m3d-canvas:active { cursor: grabbing; }
+.m3d-load { position: absolute; inset: 0; display: grid; place-items: center; color: #6e6e73; font-size: 14px; letter-spacing: -.01em; }
+.m3d-hint {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); padding: 7px 14px; border-radius: 980px;
+  background: rgba(29, 29, 31, .72); color: #fff; font-size: 12.5px; white-space: nowrap; pointer-events: none;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: opacity .6s cubic-bezier(.28, .11, .32, 1);
+}
+.m3d:not(.m3d-ready) .m3d-hint, .m3d-hint.gone { opacity: 0; }
+.m3d-ui { position: absolute; right: 14px; bottom: 14px; display: flex; gap: 6px; }
+.m3d-ui button, .m3d-cut {
+  height: 34px; border: 0; border-radius: 980px; background: rgba(255, 255, 255, .92); color: #1d1d1f;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08), 0 4px 14px rgba(0, 0, 0, .08); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.m3d-ui button { min-width: 34px; padding: 0 11px; font: 500 17px/1 Inter, system-ui, sans-serif; cursor: pointer; }
+.m3d-ui button:hover { background: #fff; }
+.m3d-ui .m3d-text { font-size: 12.5px; font-weight: 500; }
+.m3d-ui button.on { background: #1d1d1f; color: #fff; }
+.m3d-cut { position: absolute; left: 14px; bottom: 14px; display: flex; align-items: center; gap: 10px; padding: 0 14px; font-size: 12.5px; }
+.m3d-cut input { width: 130px; accent-color: #0071e3; }
+.m3d:not(.m3d-ready) .m3d-ui, .m3d:not(.m3d-ready) .m3d-cut { visibility: hidden; }
+@media (max-width: 680px) {
+  .m3d-hint { top: 12px; bottom: auto; font-size: 12px; }
+  .m3d-ui { right: 10px; bottom: 10px; }
+  .m3d-cut { left: 10px; bottom: 10px; padding: 0 12px; gap: 8px; }
+  .m3d-cut input { width: 84px; }
+}

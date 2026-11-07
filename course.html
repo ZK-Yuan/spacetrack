@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Track · 冲关模式（网页版）</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #1b2228;
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; color: #f1f3f4; }
+  #view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
+  #view:active { cursor: grabbing; }
+  #splash { position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity .25s;
+    background: radial-gradient(ellipse at center, rgba(40,150,190,.55) 0%, rgba(8,60,90,.88) 100%); }
+  .panel { position: fixed; background: rgba(18,24,29,.58); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 12px 14px; }
+  #top { top: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; align-items: center; padding: 6px 8px; }
+  #top h1 { font-size: 14px; margin: 0 8px 0 6px; white-space: nowrap; font-weight: 600; letter-spacing: .5px; }
+  button, a.btn { font: inherit; font-size: 13px; border: 0; border-radius: 7px; padding: 6px 11px; background: rgba(255,255,255,.1);
+    color: #f1f3f4; cursor: pointer; white-space: nowrap; text-decoration: none; }
+  button:hover, a.btn:hover { background: rgba(255,255,255,.2); }
+  button.on { background: #f1f3f4; color: #1b2228; }
+  button:disabled { opacity: .35; cursor: default; }
+  #task { top: 62px; left: 12px; width: 272px; font-size: 12.5px; line-height: 1.65; color: #d9dee1; }
+  #task h3 { margin: 0 0 6px; font-size: 13px; color: #fff; font-weight: 600; }
+  #task b { display: inline-block; width: 58px; color: #9fb0ba; font-weight: 500; }
+  #task .decl { display: none; }
+  #stats { top: 62px; right: 12px; display: flex; gap: 14px; padding: 8px 14px; }
+  #stats div { text-align: center; min-width: 60px; }
+  #stats strong { display: block; font-size: 20px; color: #ffb74d; font-weight: 600; font-variant-numeric: tabular-nums; }
+  #stats small { color: #9fb0ba; font-size: 11.5px; }
+  #bottom { left: 50%; bottom: 16px; transform: translateX(-50%); width: min(900px, 94vw); text-align: center; padding: 10px 14px; }
+  #msg { font-size: 15px; min-height: 22px; color: #fff; }
+  #hint { margin-top: 6px; font-size: 11.5px; color: #9fb0ba; line-height: 1.7; }
+  kbd { font: 10.5px monospace; background: rgba(255,255,255,.14); border-radius: 3px; padding: 1px 4px; margin: 0 2px; color: #e6eaec; }
+  #banner { position: fixed; left: 50%; top: 26%; transform: translate(-50%, -50%); text-align: center; pointer-events: none;
+    opacity: 0; transition: opacity .4s; text-shadow: 0 2px 18px rgba(0,0,0,.45); }
+  #banner .n { font-size: 15px; letter-spacing: 6px; color: #ffe082; }
+  #banner .t { font-size: 46px; font-weight: 700; letter-spacing: 4px; }
+  #banner .a { margin-top: 6px; font-size: 14px; color: #e0f2f1; }
+  #aibar { display: none; margin-top: 10px; }
+  #aibar .row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; align-items: center; }
+  #aibar .row + .row { margin-top: 6px; }
+  #aibar button { padding: 7px 10px; }
+  #aibar button.go { background: #ef6c00; }
+  #aibar button.warn { background: #6d4c41; }
+  #aibar label { font-size: 12.5px; color: #9fb0ba; display: flex; align-items: center; gap: 4px; }
+  #aibar input { width: 62px; font: inherit; font-size: 13px; padding: 5px 6px; border-radius: 6px; border: 0; background: rgba(255,255,255,.12); color: #fff; }
+  #godwrap { right: 12px; bottom: 16px; padding: 8px; display: none; }
+  #godwrap div { font-size: 11.5px; color: #9fb0ba; margin-bottom: 4px; }
+  #god { display: block; border-radius: 6px; }
+  #result { left: 50%; top: 50%; transform: translate(-50%, -50%); width: 380px; display: none; padding: 18px 20px; background: rgba(18,24,29,.88); }
+  #result h2 { margin: 0 0 10px; font-size: 20px; }
+  #result .kv { display: grid; grid-template-columns: 96px 1fr; gap: 4px 8px; font-size: 14px; margin-bottom: 14px; }
+  #result .kv b { color: #9fb0ba; font-weight: 500; }
+  #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: #1b2228; font-size: 17px; z-index: 10; letter-spacing: 1px; }
+  #fade { position: fixed; inset: 0; background: #071018; opacity: 0; pointer-events: none; transition: opacity .35s; }
+  #countdown { position: fixed; left: 50%; top: 42%; transform: translate(-50%, -50%); font-size: 120px; font-weight: 800; color: #fff;
+    pointer-events: none; text-shadow: 0 6px 30px rgba(0,0,0,.45); opacity: 0; }
+  #countdown.pop { animation: pop .9s ease-out; }
+  @keyframes pop { 0% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; } 15% { opacity: 1; } 70% { opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(.9); opacity: 0; } }
+  #caption { position: fixed; left: 50%; top: 18%; transform: translate(-50%, 0) scale(.9); font-size: 30px; font-weight: 800; color: #ffe082;
+    letter-spacing: 2px; pointer-events: none; opacity: 0; transition: opacity .2s, transform .2s; text-shadow: 0 3px 16px rgba(0,0,0,.5); }
+  #caption.show { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  #split { top: 130px; right: 12px; min-width: 210px; font-size: 13px; line-height: 1.7; opacity: 0; transition: opacity .3s; pointer-events: none; }
+  #split.show { opacity: 1; }
+  #split b { font-size: 15px; color: #fff; } #split .fast { color: #81c784; } #split .slow { color: #ef9a9a; } #split small { color: #9fb0ba; }
+  #result.wide { width: 520px; }
+  #result .secs { width: 100%; border-collapse: collapse; margin-top: 4px; font-size: 12px; }
+  #result .secs th { color: #9fb0ba; font-weight: 500; text-align: left; padding: 1px 4px; }
+  #result .secs td { padding: 1px 4px; border-top: 1px solid rgba(255,255,255,.06); white-space: nowrap; }
+  #result .medal { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%;
+    margin-right: 8px; font-size: 13px; font-weight: 800; color: #3a2a00; vertical-align: 3px; }
+</style>
+</head>
+<body>
+<canvas id="view"></canvas>
+<div id="splash"></div>
+<div id="fade"></div>
+<div id="countdown"></div>
+<div id="caption"></div>
+<div id="loading">正在搭建赛道…</div>
+<div id="banner"><div class="n" id="bannerN"></div><div class="t" id="bannerT"></div><div class="a" id="bannerA"></div></div>
+
+<div class="panel" id="top">
+  <h1>Space Track · 冲关模式</h1>
+  <button id="modeFree" class="on">自己玩</button>
+  <button id="modeAI">AI 动作模式</button>
+  <a class="btn" href="home.html">首页</a>
+  <a class="btn" href="course_design/index.html">设计说明</a>
+  <button id="muteBtn">声音 <kbd>M</kbd></button>
+  <button id="godBtn">俯视图 <kbd>G</kbd></button>
+  <button id="resetBtn">重新开始 <kbd>R</kbd></button>
+</div>
+
+<div class="panel" id="task"></div>
+
+<div class="panel" id="stats">
+  <div><strong id="time">0:00.0</strong><small>比赛用时</small></div>
+  <div><strong id="falls">0</strong><small>落水</small></div>
+  <div><strong id="cpNow">起点</strong><small>检查点</small></div>
+</div>
+
+<div class="panel" id="bottom">
+  <div id="msg"></div>
+  <div id="aibar">
+    <div class="row">
+      <label>距离/时间 <input id="aiVal" type="number" value="1" step="0.1" min="0"></label>
+      <button data-a="walk" class="go">走 m</button><button data-a="run" class="go">跑 m</button><button data-a="back">后退 m</button>
+      <button data-a="sideL">左移 m</button><button data-a="sideR">右移 m</button>
+      <button data-a="jump" class="go">跳 m</button><button data-a="duck">蹲 s</button><button data-a="wait">等 s</button>
+    </div>
+    <div class="row">
+      <label>角度 <input id="aiDeg" type="number" value="90" step="5"></label>
+      <button data-a="turnL">↶ 左转°</button><button data-a="turnR">↷ 右转°</button><button data-a="look">视线俯仰°</button>
+      <button data-a="grab">抓绳 / 换绳</button><button data-a="release">松手</button>
+      <button data-a="give_up" class="warn">放弃</button>
+    </div>
+  </div>
+  <div id="hint"><kbd>W</kbd><kbd>S</kbd> 前后 <kbd>A</kbd><kbd>D</kbd> 平移 <kbd>←</kbd><kbd>→</kbd>/拖动 转身 <kbd>↑</kbd><kbd>↓</kbd> 抬头低头 · 按住 <kbd>Shift</kbd> 跑 <kbd>空格</kbd> 跳（跑着跳得远）按住 <kbd>C</kbd> 蹲 · <kbd>E</kbd> 抓绳 / 换绳，挂在绳上按 <kbd>空格</kbd> 松手 · 掉水回到上一个检查点</div>
+</div>
+
+<div class="panel" id="split"></div>
+<div class="panel" id="godwrap"><div id="godTitle">俯视图（调试用，AI 看不到）</div><canvas id="god" width="250" height="380"></canvas></div>
+<div class="panel" id="result"></div>
+
+<script src="vendor/three.min.js"></script>
+<script src="course_layout.js"></script>
+<script src="tasks.js"></script>
+<script src="course_fx.js"></script>
+<script src="course.js"></script>
+</body>
+</html>

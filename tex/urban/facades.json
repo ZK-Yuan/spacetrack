@@ -1,0 +1,22 @@
+{
+ "facade_resi": "tex/urban/facade_resi.jpg",
+ "facade_resi_e": "tex/urban/facade_resi_e.jpg",
+ "facade_resi_n": "tex/urban/facade_resi_n.jpg",
+ "facade_resi_r": "tex/urban/facade_resi_r.jpg",
+ "facade_office": "tex/urban/facade_office.jpg",
+ "facade_office_e": "tex/urban/facade_office_e.jpg",
+ "facade_office_n": "tex/urban/facade_office_n.jpg",
+ "facade_office_r": "tex/urban/facade_office_r.jpg",
+ "facade_old": "tex/urban/facade_old.jpg",
+ "facade_old_e": "tex/urban/facade_old_e.jpg",
+ "facade_old_n": "tex/urban/facade_old_n.jpg",
+ "facade_old_r": "tex/urban/facade_old_r.jpg",
+ "facade_dark": "tex/urban/facade_dark.jpg",
+ "facade_dark_e": "tex/urban/facade_dark_e.jpg",
+ "facade_dark_n": "tex/urban/facade_dark_n.jpg",
+ "facade_dark_r": "tex/urban/facade_dark_r.jpg",
+ "facade_diaojiao": "tex/urban/facade_diaojiao.jpg",
+ "facade_diaojiao_e": "tex/urban/facade_diaojiao_e.jpg",
+ "facade_diaojiao_n": "tex/urban/facade_diaojiao_n.jpg",
+ "facade_diaojiao_r": "tex/urban/facade_diaojiao_r.jpg"
+}

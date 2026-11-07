@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Track · 冲关模式设计</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0b1014; color: #e8eef2; font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; }
+  main { width: min(1280px, 94vw); margin: 0 auto; padding: 28px 0 56px; }
+  a { color: #ffb24d; }
+  .back { display: inline-block; margin-bottom: 14px; font-size: 14px; }
+  .hero { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 16 / 7.4; background: #000 center 58% / cover; }
+  .hero::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(270deg, rgba(6,10,14,.95) 0%, rgba(6,10,14,.72) 38%, rgba(6,10,14,0) 64%); }
+  .hero .txt { position: absolute; right: 34px; top: 26px; bottom: 26px; width: min(520px, 58%); z-index: 1;
+    display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+  .kicker { font: 12px/1 monospace; letter-spacing: 2px; color: #8fa1ad; }
+  h1 { margin: 0; font-size: 38px; letter-spacing: 2px; }
+  .hero p { margin: 0; color: #c5d0d7; font-size: 14.5px; line-height: 1.8; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .stats div { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 8px 10px; }
+  .stats b { display: block; font-size: 18px; color: #ffb24d; } .stats span { font-size: 12px; color: #8fa1ad; }
+  .gos { display: flex; gap: 8px; flex-wrap: wrap; }
+  .go { background: #ef6c00; color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; }
+  .go.alt { background: #37474f; } .go.chal { background: #6d4c41; }
+  h2 { margin: 42px 0 6px; font-size: 22px; } .lead { margin: 0 0 16px; color: #8fa1ad; font-size: 14px; line-height: 1.7; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: #121a20; border: 1px solid #25313a; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+  .card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; cursor: zoom-in; }
+  .card .b { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card h3 { margin: 0; font-size: 17px; display: flex; align-items: center; gap: 8px; }
+  .card p { margin: 0; color: #b9c6ce; font-size: 13.5px; line-height: 1.65; }
+  .no { display: inline-flex; width: 24px; height: 24px; border-radius: 50%; background: #ffb24d; color: #0b1014; font-size: 13px;
+    align-items: center; justify-content: center; font-weight: 700; }
+  .proto { font: 11px monospace; color: #0b1014; background: #cfd8dc; border-radius: 4px; padding: 1px 6px; }
+  .abs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .ab { font-size: 11.5px; color: #fff; border-radius: 10px; padding: 1px 9px; }
+  .foot { margin-top: auto; padding-top: 6px; display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; color: #8fa1ad; }
+  .foot a { white-space: nowrap; }
+  .tag { font: 11px monospace; color: #0b1014; background: #ffb24d; border-radius: 4px; padding: 1px 6px; }
+  .wide { background: #121a20; border: 1px solid #25313a; border-radius: 14px; overflow: hidden; }
+  .wide img { display: block; width: 100%; cursor: zoom-in; }
+  .wide .b { padding: 14px 18px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; color: #b9c6ce; font-size: 13.5px; line-height: 1.7; }
+  .wide .b b { display: block; color: #e8eef2; margin-bottom: 2px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { background: #121a20; border: 1px solid #25313a; border-radius: 14px; padding: 14px 18px; color: #b9c6ce; font-size: 13.5px; line-height: 1.75; }
+  .panel h3 { margin: 0 0 8px; font-size: 16px; color: #e8eef2; }
+  .panel ul { margin: 0; padding-left: 18px; } .panel li { margin: 2px 0; }
+  code { font: 12.5px monospace; color: #4fd6e8; margin-right: 6px; }
+  pre { margin: 10px 0 0; background: #0b1014; border: 1px solid #25313a; border-radius: 8px; padding: 10px 12px; font: 12.5px/1.6 monospace; color: #cfe8ee; overflow-x: auto; }
+  .pillars { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .pillars div { background: #121a20; border: 1px solid #25313a; border-left: 4px solid #4fd6e8; border-radius: 10px; padding: 12px 14px; }
+  .pillars b { display: block; margin-bottom: 4px; } .pillars span { color: #b9c6ce; font-size: 13.5px; line-height: 1.65; }
+  .refs { background: #121a20; border: 1px solid #25313a; border-radius: 12px; padding: 14px 18px; color: #b9c6ce; font-size: 13.5px; line-height: 1.9; }
+  .refs b { color: #4fd6e8; margin-right: 6px; }
+  #lb { position: fixed; inset: 0; background: rgba(0,0,0,.92); display: none; align-items: center; justify-content: center; z-index: 9; cursor: zoom-out; }
+  #lb img { max-width: 96vw; max-height: 92vh; } #lb a { position: absolute; right: 22px; top: 16px; font-size: 14px; }
+  @media (max-width: 960px) { .grid3, .two, .pillars, .wide .b { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(2, 1fr); }
+    .hero { aspect-ratio: auto; min-height: 640px; } .hero .txt { width: auto; left: 20px; right: 20px; } }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../home.html">← 回到 Space Track 首页</a>
+  <header class="hero" style="background-image:url(img/hero.jpg)">
+    <div class="txt">
+      <div class="kicker">SPACE TRACK · 冲关模式 · 第一人称闯关</div>
+      <h1>男生女生向前冲</h1>
+      <p>泳池上的 12 关障碍赛：摆锤、旋转扫杆、大红球、拳击墙、传送带、浮板、真假踏板、侧风、荡绳、记忆桥。寻路题考的是“路在哪”，
+        这里考的是“东西接下来怎么动、我什么时候动、我跳得过去吗”。所有障碍都按固定周期运动，同一局每次都一样，人和 AI 走的是同一套物理。</p>
+      <div class="stats"><div><b>12</b><span>关</span></div><div><b>约 320 米</b><span>赛道</span></div><div><b>12</b><span>个检查点</span></div><div><b>2:49</b><span>程序解全程用时</span></div><div><b>166</b><span>程序解动作数</span></div><div><b>4 × 0.25 s</b><span>每步连拍</span></div><div><b>13</b><span>种 AI 动作</span></div><div><b>0</b><span>程序解落水</span></div></div>
+      <div class="gos"><a class="go" href="../course.html?task=full">开始闯关 →</a><a class="go chal" href="../course.html?task=full&amp;challenge=1">挑战模式</a>
+        <a class="go alt" href="../course.html?task=full&amp;ai=1">AI 动作模式</a></div>
+    </div>
+  </header>
+
+  <h2>12 关 · 每关主考一种能力</h2>
+  <p class="lead">图是模型在每关门口看到的第一人称画面（Blender 渲染，和网页版同一视角）。“程序解”是网页里自带的解法跑出的最快用时，可以当成满分参考。点图片看大图。</p>
+  <div class="grid3"><div class="card"><img src="img/v01.jpg" data-full="img/v01.jpg" alt=""><div class="b"><h3><span class="no">1</span>热身跳台<span class="proto">原型</span></h3><div class="abs"><span class="ab" style="background:#1E88E5">测距</span><span class="ab" style="background:#546E7A">身体认知</span></div><p>静止圆台，间距 1.2→2.6 米，台面上标了距离。后两个间距要跑起来跳，也是试出自己能跳多远的地方。</p><div class="foot"><span>程序解 10 步 / 11.3 秒 · AI 上限 40 步</span><a href="../course.html?task=s1">单练这一关 →</a></div></div></div><div class="card"><img src="img/v02.jpg" data-full="img/v02.jpg" alt=""><div class="b"><h3><span class="no">2</span>摆锤走廊<span class="proto">原型</span></h3><div class="abs"><span class="ab" style="background:#E53935">运动预测</span><span class="ab" style="background:#FB8C00">找时机</span></div><p>4 个摆锤，周期 2.0 / 3.0 / 2.4 / 3.6 秒，相位各不相同。要看出周期，找能连续通过的窗口。</p><div class="foot"><span>程序解 6 步 / 6.2 秒 · AI 上限 28 步</span><a href="../course.html?task=s2">单练这一关 →</a></div></div></div><div class="card"><img src="img/v03.jpg" data-full="img/v03.jpg" alt=""><div class="b"><h3><span class="no">3</span>旋转扫杆<span class="proto">原型</span></h3><div class="abs"><span class="ab" style="background:#E53935">运动预测</span><span class="ab" style="background:#FB8C00">找时机</span></div><p>转盘上一高一低两根杆，6.5 秒一圈。低杆跳过去，高杆蹲下去，先认清是哪根。</p><div class="foot"><span>程序解 4 步 / 4.7 秒 · AI 上限 22 步</span><a href="../course.html?task=s3">单练这一关 →</a></div></div></div><div class="card"><img src="img/v04.jpg" data-full="img/v04.jpg" alt=""><div class="b"><h3><span class="no">4</span>大红球<span class="proto">原型</span></h3><div class="abs"><span class="ab" style="background:#1E88E5">测距</span><span class="ab" style="background:#D81B60">冒险还是求稳</span></div><p>6 个大球，间距越来越大，落点偏离球顶 0.6 米就会滑下去。最后一跳从球心到台边 4.0 米，超出极限，要在起跳台上看出来，改走旁边的吊桥。</p><div class="foot"><span>程序解 4 步 / 22.2 秒 · AI 上限 22 步</span><a href="../course.html?task=s4">单练这一关 →</a></div></div></div><div class="card"><img src="img/v05.jpg" data-full="img/v05.jpg" alt=""><div class="b"><h3><span class="no">5</span>拳击墙<span class="proto">原型</span></h3><div class="abs"><span class="ab" style="background:#8E24AA">找规律</span><span class="ab" style="background:#FB8C00">找时机</span></div><p>墙上 8 列拳头按 1-3-2-4 的顺序轮流打出，看出规律才知道什么时候走哪段。</p><div class="foot"><span>程序解 10 步 / 6.5 秒 · AI 上限 40 步</span><a href="../course.html?task=s5">单练这一关 →</a></div></div></div><div class="card"><img src="img/v06.jpg" data-full="img/v06.jpg" alt=""><div class="b"><h3><span class="no">6</span>逆向传送带 + 滚筒</h3><div class="abs"><span class="ab" style="background:#00ACC1">相对运动</span><span class="ab" style="background:#43A047">能不能踩</span></div><p>传送带以 2.5 m/s 往回走，走路会被带回去，必须跑；滚筒会把人往右带，要往左压着走。</p><div class="foot"><span>程序解 3 步 / 11.6 秒 · AI 上限 19 步</span><a href="../course.html?task=s6">单练这一关 →</a></div></div></div><div class="card"><img src="img/v07.jpg" data-full="img/v07.jpg" alt=""><div class="b"><h3><span class="no">7</span>移动浮板<span class="proto">原型</span></h3><div class="abs"><span class="ab" style="background:#00ACC1">相对运动</span><span class="ab" style="background:#E53935">运动预测</span></div><p>4 块浮板横向往返，周期 5.0 / 6.0 / 4.6 / 5.6 秒。起跳要瞄浮板落地那一刻的位置，而且会带着脚下浮板的速度。</p><div class="foot"><span>程序解 20 步 / 10.3 秒 · AI 上限 70 步</span><a href="../course.html?task=s7">单练这一关 →</a></div></div></div><div class="card"><img src="img/v08.jpg" data-full="img/v08.jpg" alt=""><div class="b"><h3><span class="no">8</span>真假踏板</h3><div class="abs"><span class="ab" style="background:#43A047">能不能踩</span><span class="ab" style="background:#6D4C41">观察学习</span></div><p>每排两块，一块会塌，两列之间隔着半米要跳过去。假板有裂纹、颜色略深、没有螺丝；前面的 NPC 会先跳一步。</p><div class="foot"><span>程序解 14 步 / 7.8 秒 · AI 上限 52 步</span><a href="../course.html?task=s8">单练这一关 →</a></div></div></div><div class="card"><img src="img/v09.jpg" data-full="img/v09.jpg" alt=""><div class="b"><h3><span class="no">9</span>侧风独木桥</h3><div class="abs"><span class="ab" style="background:#43A047">能不能踩</span><span class="ab" style="background:#00ACC1">相对运动</span></div><p>左侧 3 台风机，中间那台没开。看飘带判断哪段有风，有风要往左压。</p><div class="foot"><span>程序解 9 步 / 12.5 秒 · AI 上限 37 步</span><a href="../course.html?task=s9">单练这一关 →</a></div></div></div><div class="card"><img src="img/v10.jpg" data-full="img/v10.jpg" alt=""><div class="b"><h3><span class="no">10</span>荡绳</h3><div class="abs"><span class="ab" style="background:#FB8C00">找时机</span><span class="ab" style="background:#E53935">运动预测</span></div><p>在台边抓住第一根绳，两根绳靠近时换到第二根，荡到前方高处松手落到台上。</p><div class="foot"><span>程序解 7 步 / 5.6 秒 · AI 上限 31 步</span><a href="../course.html?task=s10">单练这一关 →</a></div></div></div><div class="card"><img src="img/v11.jpg" data-full="img/v11.jpg" alt=""><div class="b"><h3><span class="no">11</span>记忆桥</h3><div class="abs"><span class="ab" style="background:#3949AB">记忆</span></div><p>3×5 的灯板，板间有缝要一块块跳。安全路线每 12 秒亮 3 秒，熄灭后凭记忆跳，踩错就塌。</p><div class="foot"><span>程序解 12 步 / 6.5 秒 · AI 上限 46 步</span><a href="../course.html?task=s11">单练这一关 →</a></div></div></div><div class="card"><img src="img/v12.jpg" data-full="img/v12.jpg" alt=""><div class="b"><h3><span class="no">12</span>终极关</h3><div class="abs"><span class="ab" style="background:#E53935">运动预测</span><span class="ab" style="background:#FB8C00">找时机</span><span class="ab" style="background:#00ACC1">相对运动</span></div><p>摆锤、浮板、小转盘连在一起，中途只有一个中转台。</p><div class="foot"><span>程序解 25 步 / 14.4 秒 · AI 上限 85 步</span><a href="../course.html?task=s12">单练这一关 →</a></div></div></div></div>
+
+  <h2>看清运动，需要连拍</h2>
+  <p class="lead">单看一帧，分不清锤子正往哪边摆、有多快。AI 动作模式每一步都返回 4 张连拍（间隔 0.25 秒，最后一张就是当前画面），模型要从里面估出周期，再决定什么时候上桥。下面是摆锤走廊的 4 帧，四个锤子周期分别是 2.0 / 3.0 / 2.4 / 3.6 秒。</p>
+  <div class="wide"><img src="img/burst.jpg" data-full="img/burst.jpg" alt="">
+    <div class="b"><div><b>回合制（已实现）</b>模型思考时世界暂停，每个动作按它耗的时间推进；评测的主榜用这个模式，排除模型推理速度的影响。</div>
+      <div><b>预编排（已实现，<code>plan</code>）</b>一次给出最多 12 个动作，中途不看画面，连续执行。纯粹考脑内的物理推演：等 1.2 秒、跑 3 米、跳。</div>
+      <div><b>实时（待做）</b>世界按真实时间走，模型的思考延迟也算进去，用来展示延迟的代价，并和人类玩家对照。</div></div></div>
+
+  <h2>设计图纸与网页版画面</h2>
+  <p class="lead">图纸、Blender 场景和网页版都读同一份布局文件（course/layout.py），障碍位置、周期和机位只写一次。</p>
+  <div class="grid3"><div class="card"><img src="img/overview_t.jpg" data-full="img/overview.jpg" alt=""><div class="b"><h3><span class="tag">图 1</span>赛道俯视示意图</h3><p>三条赛道蛇形折返；每个障碍的运动范围和周期、检查点、12 个机位，右侧是每关考的能力。</p></div></div><div class="card"><img src="img/views_t.jpg" data-full="img/views.jpg" alt=""><div class="b"><h3><span class="tag">图 2</span>12 关第一人称（Blender）</h3><p>和网页版同样的眼高与视场，所有画面取同一时刻 t = 3 秒。</p></div></div><div class="card"><img src="img/hero2_t.jpg" data-full="img/hero2.jpg" alt=""><div class="b"><h3><span class="tag">图 3</span>斜侧视角（Blender）</h3><p>红黄蓝充气障碍、泳池、看台和计时大屏，参考节目的样子。</p></div></div><div class="card"><img src="img/web_views_t.jpg" data-full="img/web_views.jpg" alt=""><div class="b"><h3><span class="tag">图 4</span>网页版画面</h3><p>浏览器里实时渲染的同 12 个机位：三维场景、阴影、水面反射，没有用任何预渲染图。</p></div></div><div class="card"><img src="img/web_ui_t.jpg" data-full="img/web_ui.jpg" alt=""><div class="b"><h3><span class="tag">图 5</span>AI 动作模式界面</h3><p>世界在思考时暂停；按距离、秒数或角度下动作，执行完回放给你看。</p></div></div><div class="card"><img src="img/web_free_t.jpg" data-full="img/web_free.jpg" alt=""><div class="b"><h3><span class="tag">图 6</span>自己玩</h3><p>键盘实时操作，右上角是比赛用时、落水次数和检查点。</p></div></div></div>
+
+  <h2>AI 怎么闯关</h2>
+  <div class="two">
+    <div class="panel"><h3>动作</h3><ul><li><code>wait</code>原地等待 0.05–20 秒</li><li><code>walk</code>朝前走，按平地 1.6 m/s 计时（传送带、滚筒、吊桥上实际位移不同）</li><li><code>run</code>朝前跑，按平地 4.0 m/s 计时</li><li><code>back</code>后退，1.6 m/s</li><li><code>sidestep</code>平移，正数向左、负数向右，1.6 m/s</li><li><code>turn</code>原地转身，正数向左、负数向右，耗时 0.1 秒</li><li><code>jump</code>向正前方跳，0–3.2 米（按落在同一高度算），起跳时带着脚下平台的速度</li><li><code>duck</code>原地蹲下，身高从 1.75 米降到 1.0 米</li><li><code>grab</code>伸手抓绳；挂在绳上时换到另一根够得着的绳</li><li><code>release</code>松开绳子</li><li><code>look</code>把视线俯仰调到指定角度（-60 到 30，负数低头），不耗时</li><li><code>plan</code>一次给出最多 12 个动作，中途不看画面，连续执行</li><li><code>give_up</code>放弃本局</li></ul></div>
+    <div class="panel"><h3>观察、得分和接口</h3><ul>
+      <li><b>画面</b>：768×432 第一人称，眼高 1.65 米，垂直视场 60°；每步 4 张连拍。</li>
+      <li><b>文字</b>：纯视觉模式下只说身体发生了什么，比如“被撞飞了，掉进了水里，回到了上一个检查点”，不会说障碍在哪、怎么动；图文模式会多给当前是第几关。</li>
+      <li><b>身体</b>：走 1.6 m/s，跑 4.0 m/s，最远跳 3.2 米，起跳高度 0.8 米，蹲下后身高 1.0 米。这些写在任务卡里，也可以不告诉模型，让它在热身跳台自己试。</li>
+      <li><b>掉水</b>：回到上一个检查点，3 秒后重新出发，时间照算，不直接判负，这样才能看出它会不会从失败里学习。</li>
+      <li><b>每关单独算</b>：每关自己的步数上限、用时、落水和得分。步数上限 = 进入这一关那一刻程序解的步数 × 3 + 10（默认这一局单关 19–85 步，12 关合计 492 步），时间上限 300 秒。全程任务里某关用完就判这关失败、跳到下一关起点继续，总分是 12 关得分的平均。</li>
+      <li><b>每关得分</b>：程序解从同一状态（同一位置、同一时刻）出发的用时 ÷ 实际用时，没过记 0。</li>
+      <li><b>挑战模式</b>：每局随机周期、相位、出拳顺序、假板、记忆路线、风机开关；大红球最后一跳（球心到落地台）在 3.0 米和 4.0 米之间随机，一半的局根本跳不过去。</li></ul>
+      <pre>from web_env import WebEnv
+env = WebEnv("course", "s2", obs_mode="vision_only")
+obs = env.reset()            # obs["frames_png"]：4 张连拍
+obs, done, info = env.step(("run", 5.6))
+obs, done, info = env.step(("jump", 2.4))</pre></div>
+  </div>
+
+  <h2>公平、可复现、堵住捷径</h2>
+  <div class="pillars">
+    <div><b>只靠画面也能判断</b><span>假板有裂纹、颜色略深、没有螺丝；风机开没开看飘带；传送带上的箭头指着运动方向；滚筒有螺旋条纹看得出转向；前面的 NPC 选手会先跳到安全的板上。</span></div>
+    <div><b>同一局永远一样</b><span>所有运动都只由时间和随机种子决定，物理按 1/60 秒固定步长推进，没有刚体模拟的随机性；人、AI 和程序解走的是同一份代码。</span></div>
+    <div><b>每关都有解，且有参考用时</b><span>网页自带一个搜索解法：在每个障碍前试不同的等待时间，用同一套物理模拟出能通过的动作序列。默认这一局程序解用 2:49 跑完 12 关、不落水；挑战模式试过的 13 个随机种子全部跑通。</span></div>
+    <div><b>测试时堵掉的捷径</b><span>“跳不过去”的最后一跳因为平台低、下落时间长其实能跳过去，于是加了和球顶等高的落地台；沿两列假板中间的缝走能绕开假板，于是两列之间隔开半米；跳得够快能在假板塌之前离开，于是改成一碰就塌；被扫杆打中有时还能落回转盘，现在被撞中一律落水。</span></div>
+    <div><b>不看画面就过不去</b><span>直接走过摆锤会被撞下水，闭眼跑也一样；滚筒和侧风桥上直着走会被带下去；在传送带上走路会被带回原地；随便踩一块板有一半会塌。</span></div>
+    <div><b>对人更友好的手感</b><span>键盘玩家：跑出台边 0.15 秒内按跳仍然算起跳，落地前 0.15 秒按的跳会被记住，空中可以调整方向；脚离台面 0.5 米以内能扒上去。AI 只在地面起跳，这些辅助不影响它的动作结果。</span></div>
+    <div><b>“看懂”和“做对”分开测</b><span>同样的画面可以直接提问（锤子周期几秒？现在跳够得着吗？下一拳从哪出？），再和实际闯关成绩对比，分清是没看懂，还是看懂了但动作做不对。（问答题还没做）</span></div>
+  </div>
+
+  <h2>参考</h2>
+  <div class="refs"><b>节目</b>《男生女生向前冲》（安徽卫视）· 《Wipeout》· 《风云挑战》（Takeshi's Castle）：水上障碍、掉水重来的规则和充气道具<br>
+    <b>游戏</b>《糖豆人》（Fall Guys，2020）：周期障碍、转盘扫杆和真假门的关卡语言<br>
+    <b>评测</b>VideoGameBench（2025）发现模型实时玩游戏几乎过不了关，于是另做了暂停版；PHYRE、Physion、CLEVRER 等物理推理基准都是旁观答题，模型不用亲自上场<br>
+    <b>文件</b>web/course.html · web/course.js（物理、程序解、渲染、AI 接口）· course/layout.py（唯一的布局数据）· bench/web_env.py（Python 接口）</div>
+</main>
+<div id="lb"><a target="_blank">打开原图 ↗</a><img alt=""></div>
+<script>
+  const lb = document.getElementById("lb"), lbImg = lb.querySelector("img"), lbA = lb.querySelector("a");
+  document.querySelectorAll("img[data-full]").forEach((im) => im.addEventListener("click", () => {
+    lbImg.src = im.dataset.full; lbA.href = im.dataset.full; lb.style.display = "flex";
+  }));
+  lb.addEventListener("click", (ev) => { if (ev.target !== lbA) lb.style.display = "none"; });
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") lb.style.display = "none"; });
+</script>
+</body>
+</html>

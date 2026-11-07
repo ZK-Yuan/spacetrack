@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Track · 无尽回廊（B1 夜班层）</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #14130f;
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; color: #f1f3f4; }
+  #view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; }
+  #view:active { cursor: grabbing; }
+  #vignette { position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 58%, rgba(12,10,6,.42) 100%); }
+  #fade { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .35s; }
+  .panel { position: fixed; background: rgba(22,20,15,.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 12px 14px; }
+  #top { top: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; align-items: center; padding: 6px 8px; }
+  #top h1 { font-size: 14px; margin: 0 8px 0 6px; white-space: nowrap; font-weight: 600; letter-spacing: .5px; }
+  button, a.btn { font: inherit; font-size: 13px; border: 0; border-radius: 7px; padding: 6px 11px; background: rgba(255,255,255,.1);
+    color: #f1f3f4; cursor: pointer; white-space: nowrap; text-decoration: none; }
+  button:hover, a.btn:hover { background: rgba(255,255,255,.2); }
+  button.on { background: #f1f3f4; color: #1b2228; }
+  #task { top: 62px; left: 12px; width: 272px; font-size: 12.5px; line-height: 1.65; color: #ddd8cc; }
+  #task h3 { margin: 0 0 6px; font-size: 13px; color: #fff; font-weight: 600; }
+  #task b { display: inline-block; width: 58px; color: #b3aa96; font-weight: 500; }
+  #stats { top: 62px; right: 12px; display: flex; gap: 14px; padding: 8px 14px; }
+  #stats div { text-align: center; min-width: 64px; }
+  #stats strong { display: block; font-size: 20px; color: #ffcf6e; font-weight: 600; }
+  #stats small { color: #b3aa96; font-size: 11.5px; }
+  #bottom { left: 50%; bottom: 16px; transform: translateX(-50%); width: min(840px, 92vw); text-align: center; padding: 10px 14px; }
+  #msg { font-size: 15px; min-height: 22px; color: #fff; }
+  #hint { margin-top: 6px; font-size: 11.5px; color: #b3aa96; }
+  #usebar { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+  #usebar button { padding: 5px 9px; font-size: 12.5px; background: #5d4a2a; }
+  #usebar button.wait { background: rgba(255,255,255,.1); }
+  #toolbar { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+  #toolbar button { padding: 5px 9px; font-size: 12.5px; background: #2e4a3a; }
+  #replay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.82); z-index: 9; cursor: zoom-out; }
+  #replay img { max-width: 86vw; max-height: 80vh; border: 2px solid #3a3a3a; }
+  #replay div { position: absolute; bottom: 6vh; color: #d9dee1; font-size: 14px; font-family: monospace; }
+  #osd .batt { right: 5%; top: 11%; }
+  body.nohud #osd .batt { top: 6%; }
+  kbd { font: 10.5px monospace; background: rgba(255,255,255,.14); border-radius: 3px; padding: 1px 4px; margin: 0 2px; color: #e6eaec; }
+  #godwrap { right: 12px; bottom: 16px; padding: 8px; display: none; }
+  #godwrap div { font-size: 11.5px; color: #b3aa96; margin-bottom: 4px; }
+  #god { display: block; border-radius: 6px; }
+  #result { left: 50%; top: 50%; transform: translate(-50%, -50%); width: 380px; display: none; padding: 18px 20px; background: rgba(22,20,15,.96); }
+  #result h2 { margin: 0 0 10px; font-size: 20px; }
+  #result .kv { display: grid; grid-template-columns: 96px 1fr; gap: 4px 8px; font-size: 14px; margin-bottom: 14px; }
+  #result .kv b { color: #b3aa96; font-weight: 500; }
+  #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: #14130f; font-size: 17px; z-index: 10; letter-spacing: 1px; color: #e6dcc0; }
+  /* camcorder footage: 4:3 in black bars, with the recorder's on-screen display */
+  body.tape { background: #000; }
+  body.tape #view { left: 50%; top: 50%; right: auto; bottom: auto; transform: translate(-50%, -50%); }
+  body.tape #vignette { display: none; }
+  #osd { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); pointer-events: none; display: none;
+    font-family: "Courier New", "Lucida Console", monospace; font-weight: 700; color: #f2f2ec; letter-spacing: 2px;
+    font-size: clamp(15px, 3.1vh, 30px); text-shadow: 2px 0 rgba(255,50,40,.5), -2px 0 rgba(40,160,255,.5), 0 0 6px rgba(255,255,255,.35); }
+  #osd div { position: absolute; }
+  #osd .play { left: 5%; top: 11%; animation: blink 0.6s steps(1) 3; }
+  #osd .date { left: 5%; bottom: 7%; }
+  #osd .clock { right: 5%; bottom: 7%; }
+  body.nohud #osd .play { top: 6%; }
+  body.tape #bottom { width: min(440px, 34vw); }
+  body.tape #msg { font-size: 14px; }
+  @keyframes blink { 50% { opacity: 0; } }
+  #task h3 { cursor: pointer; }
+  #task.mini { width: auto; }
+  #task.mini > *:not(h3) { display: none; }
+  #task.mini h3 { margin: 0; }
+  #task.mini h3::after { content: " ▸"; color: #b3aa96; }
+  body.nohud #top, body.nohud #task, body.nohud #stats, body.nohud #bottom, body.nohud #godwrap { display: none !important; }
+</style>
+</head>
+<body>
+<canvas id="view"></canvas>
+<div id="osd"><div class="play">PLAY ▶</div><div class="date">OCT. 23 1996</div><div class="clock" id="osdTime">PM 11:00:00</div><div class="batt" id="osdBatt"></div></div>
+<div id="vignette"></div>
+<div id="fade"></div>
+<div id="loading">正在搭建 B1 夜班层…</div>
+
+<div class="panel" id="top">
+  <h1>Space Track · 无尽回廊</h1>
+  <a class="btn" href="home.html">首页</a>
+  <button id="lookBtn">画面：录像带 <kbd>V</kbd></button>
+  <button id="soundBtn">声音：开 <kbd>M</kbd></button>
+  <button id="godBtn">上帝视角 <kbd>G</kbd></button>
+  <button id="resetBtn">重新开始 <kbd>R</kbd></button>
+</div>
+
+<div class="panel" id="task"></div>
+
+<div class="panel" id="stats">
+  <div><strong id="walked">0</strong><small>已走（米）</small></div>
+  <div><strong id="steps">–</strong><small>动作步数</small></div>
+  <div><strong id="time">0:00</strong><small>用时</small></div>
+</div>
+
+<div class="panel" id="bottom">
+  <div id="msg"></div>
+  <div id="hint"><kbd>WASD</kbd> 走 <kbd>←</kbd><kbd>→</kbd>/拖动 转身 <kbd>Shift</kbd> 跑 <kbd>F</kbd> 走近看 <kbd>1</kbd>–<kbd>9</kbd> 操作身边的开关 <kbd>Z</kbd> 原地等 <kbd>Enter</kbd> 到了 <kbd>X</kbd> 做不到 · <kbd>V</kbd> 画面 <kbd>M</kbd> 声音 <kbd>H</kbd> 隐藏界面</div>
+</div>
+
+<div class="panel" id="godwrap"><div id="godTitle">上帝视角（调试用）</div><canvas id="god" width="340" height="270"></canvas></div>
+<div class="panel" id="result"></div>
+
+<script src="vendor/three.min.js"></script>
+<script src="tex/loop/textures.js"></script>
+<script src="tasks.js"></script>
+<script src="nav.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="models/loop_entity.js"></script>
+<script src="loop_fx.js"></script>
+<script src="loop.js"></script>
+</body>
+</html>

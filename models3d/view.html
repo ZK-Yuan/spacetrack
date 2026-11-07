@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Track · 3D model</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #fff; font: 14px/1.4 Inter, system-ui, sans-serif; color: #1d1d1f; }
+  html[data-lang="en"] .zh, html[data-lang="zh"] .en { display: none !important; }
+  #stage { position: absolute; inset: 0; }
+  nav { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; z-index: 5; }
+  nav a { padding: 6px 12px; border-radius: 980px; background: #f5f5f7; color: #1d1d1f; text-decoration: none; }
+  nav a.on { background: #1d1d1f; color: #fff; }
+  .shot nav, .shot .m3d-ui, .shot .m3d-hint, .shot .m3d-cut { display: none !important; }
+</style>
+<link rel="stylesheet" href="../model3d.css">
+</head>
+<body>
+<nav id="nav"></nav>
+<div id="stage"></div>
+<script src="../vendor/three.min.js"></script>
+<script src="../vendor/GLTFLoader.js"></script>
+<script src="../vendor/meshopt_decoder.js"></script>
+<script src="../model3d.js"></script>
+<script>
+  const q = new URLSearchParams(location.search), world = q.get("world") || "renovate";
+  if (q.get("lang")) document.documentElement.dataset.lang = q.get("lang");
+  ["park", "course", "loop", "sana", "renovate", "detective"].forEach((w) => {
+    const a = document.createElement("a");
+    a.href = "?world=" + w; a.textContent = w; if (w === world) a.className = "on";
+    document.getElementById("nav").appendChild(a);
+  });
+  const preset = {};
+  ["az", "el", "zoom", "exposure"].forEach((k) => { if (q.has(k)) preset[k] = Number(q.get(k)); });
+  // ?shot=1: a bare still for posters (bench/home_posters.js)
+  if (q.has("shot")) document.documentElement.classList.add("shot");
+  window.viewer = SAModel3D.mount(document.getElementById("stage"), { src: world + ".glb", world, base: "../", preset,
+    still: q.has("shot") || q.has("still"), card: q.has("card") });
+</script>
+</body>
+</html>

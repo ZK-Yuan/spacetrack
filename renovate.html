@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Track · 旧宅翻新（单层原型）</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #1b1814;
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; color: #f1f3f4; }
+  /* the live view is letterboxed to the agents' 16:9 frame at the same field of view (sized in renovate.js) */
+  #view { position: fixed; left: 0; top: 0; display: block; }
+  body.nohud .panel:not(#result) { display: none !important; }
+  #calib { position: fixed; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #111; z-index: 9; }
+  #calib img { max-width: 96vw; max-height: 78vh; aspect-ratio: 16 / 9; border-radius: 6px; background: #000; }
+  #calib .q { font-size: 18px; color: #fff; }
+  #calib .sub { font-size: 13px; color: #b9ae98; }
+  #calib .btns { display: flex; gap: 10px; }
+  #calib .btns button { font-size: 15px; padding: 9px 18px; }
+  #calib .btns .yes { background: #2e7d32; } #calib .btns .no { background: #6d4c41; }
+  #calib table { border-collapse: collapse; font-size: 14px; color: #eee; }
+  #calib td, #calib th { border: 1px solid #444; padding: 6px 12px; text-align: center; }
+  .panel { position: fixed; background: rgba(26,23,19,.66); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 12px 14px; }
+  #top { top: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; align-items: center; padding: 6px 8px; }
+  #top h1 { font-size: 14px; margin: 0 8px 0 6px; white-space: nowrap; font-weight: 600; letter-spacing: .5px; }
+  button, a.btn, select { font: inherit; font-size: 13px; border: 0; border-radius: 7px; padding: 6px 11px; background: rgba(255,255,255,.1);
+    color: #f1f3f4; cursor: pointer; white-space: nowrap; text-decoration: none; }
+  select { padding: 5px 6px; }
+  select option { color: #111; }
+  button:hover, a.btn:hover { background: rgba(255,255,255,.2); }
+  #task { top: 62px; left: 12px; width: 300px; font-size: 12.5px; line-height: 1.65; color: #e3dccd; max-height: calc(100vh - 230px); overflow: auto; }
+  #task h3 { margin: 0 0 6px; font-size: 13px; color: #fff; font-weight: 600; }
+  #task b { display: inline-block; width: 58px; color: #b9ae98; font-weight: 500; }
+  #task ol { margin: 6px 0 0; padding-left: 18px; }
+  #task li.ok { color: #9ccc65; }
+  #stats { top: 62px; right: 12px; display: flex; gap: 14px; padding: 8px 14px; }
+  #stats div { text-align: center; min-width: 58px; }
+  #stats strong { display: block; font-size: 20px; color: #ffcf6e; font-weight: 600; }
+  #stats small { color: #b9ae98; font-size: 11.5px; }
+  #bottom { left: 50%; bottom: 14px; transform: translateX(-50%); width: min(900px, 94vw); text-align: center; padding: 10px 14px; }
+  #msg { font-size: 15px; min-height: 22px; color: #fff; }
+  #bar { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  #bar .row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  #bar button.go { background: #ef6c00; }
+  #bar label.num { font-size: 12.5px; color: #b9ae98; display: flex; align-items: center; gap: 4px; }
+  #bar input { width: 58px; font: inherit; font-size: 13px; padding: 5px; border-radius: 6px; border: 0; background: rgba(255,255,255,.12); color: #fff; }
+  #freebar { font-size: 12.5px; color: #d9d2c2; }
+  #top button.on { background: #f1f3f4; color: #1b2228; }
+  #bar button.work { background: #5d4a2a; }
+  #bar button.stop { background: #c2185b; }
+  #bar button.warn { background: #6d4c41; }
+  #hint { margin-top: 6px; font-size: 11.5px; color: #b9ae98; }
+  kbd { font: 10.5px monospace; background: rgba(255,255,255,.14); border-radius: 3px; padding: 1px 4px; margin: 0 2px; color: #e6eaec; }
+  #godwrap { right: 12px; top: 130px; padding: 8px; }
+  #godwrap div { font-size: 11.5px; color: #b9ae98; margin-bottom: 4px; }
+  #god { display: block; border-radius: 6px; }
+  #result { left: 50%; top: 50%; transform: translate(-50%, -50%); width: 420px; display: none; padding: 18px 20px; background: rgba(26,23,19,.96); }
+  #result h2 { margin: 0 0 10px; font-size: 20px; }
+  #result .kv { display: grid; grid-template-columns: 110px 1fr; gap: 4px 8px; font-size: 14px; margin-bottom: 14px; }
+  #result .kv b { color: #b9ae98; font-weight: 500; }
+  #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: #1b1814; font-size: 17px; z-index: 10; letter-spacing: 1px; color: #eadfc6; }
+  #cross { position: fixed; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; pointer-events: none; opacity: .7; }
+  #cross::before, #cross::after { content: ""; position: absolute; background: #fff; }
+  #cross::before { left: 6px; top: 0; width: 2px; height: 14px; }
+  #cross::after { top: 6px; left: 0; height: 2px; width: 14px; }
+  /* Cycles still of the current view, laid exactly over the live canvas (renovate.js keeps its box in step) */
+  #photo { position: fixed; left: 0; top: 0; pointer-events: none; opacity: 0; transition: opacity .6s ease; }
+  #photo.quick { transition: opacity .12s linear; }
+  #photoNote { position: fixed; right: 16px; bottom: 16px; font-size: 12.5px; color: #eadfc6; background: rgba(26,23,19,.7);
+    border-radius: 8px; padding: 5px 10px; display: none; pointer-events: none; }
+</style>
+</head>
+<body>
+<canvas id="view"></canvas>
+<img id="photo" alt="">
+<div id="cross"></div>
+<div id="photoNote">写实画面渲染中…</div>
+<div id="loading">正在搭建旧宅…</div>
+<div class="panel" id="top">
+  <h1>Space Track · 旧宅翻新</h1>
+  <button id="modeFree">自己玩</button><button id="modeAI">AI 动作模式</button>
+  <button id="photoBtn" style="display:none" title="停下来时用 Blender Cycles 渲染当前画面（需要 playtest_server.py --photoreal）">写实画面</button>
+  <a class="btn" href="home.html">首页</a><button id="restart">重新开始 <kbd>R</kbd></button>
+</div>
+<div class="panel" id="task"></div>
+<div class="panel" id="stats">
+  <div><strong id="steps">0</strong><small>步数</small></div>
+  <div><strong id="bag">0/6</strong><small>垃圾袋</small></div>
+</div>
+<div class="panel" id="godwrap" style="display:none"><div>上帝视角（结算后可看）</div><canvas id="god" width="300" height="214"></canvas></div>
+<div id="calib"></div>
+<div class="panel" id="bottom">
+  <div id="msg"></div>
+  <div id="bar">
+    <div class="row" id="aibar">
+      <label class="num">距离 <input id="aiDist" type="number" value="1" step="0.1" min="0.05"> 米</label>
+      <button data-a="walk" class="go">前进 <kbd>W</kbd></button><button data-a="back">后退 <kbd>S</kbd></button>
+      <button data-a="sideL">左移 <kbd>Q</kbd></button><button data-a="sideR">右移 <kbd>E</kbd></button>
+      <label class="num">角度 <input id="aiDeg" type="number" value="30" step="5"> °</label>
+      <button data-a="turnL">左转 <kbd>A</kbd></button><button data-a="turnR">右转 <kbd>D</kbd></button>
+      <button data-a="look">视线俯仰 = 角度</button><button data-a="lookUp">抬头</button><button data-a="lookLevel">平视</button><button data-a="lookDown">低头</button>
+    </div>
+    <div class="row" id="freebar"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 移动 · 拖动鼠标 / <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> 看四周 · 施工键见下一行</div>
+    <div class="row">
+      <button data-a="clean" class="work">擦 <kbd>C</kbd></button><button data-a="pick_up" class="work">捡起 <kbd>G</kbd></button><button data-a="put_down" class="work">放下 <kbd>V</kbd></button>
+      <button data-a="dispose" class="work">倒垃圾 <kbd>B</kbd></button><button data-a="move_aside" class="work">挪家具 <kbd>M</kbd></button>
+      <select id="color"></select><button data-a="paint" class="work">刷墙 <kbd>P</kbd></button>
+      <button data-a="demolish" class="work">拆墙 <kbd>H</kbd></button>
+      <select id="fixture"></select><button data-a="install" class="work">安装 <kbd>I</kbd></button>
+      <button data-a="look_closer">走近看 <kbd>F</kbd></button>
+      <button data-a="stop" class="stop">完工 <kbd>Enter</kbd></button><button data-a="declare_impossible" class="warn">做不到 <kbd>X</kbd></button>
+    </div>
+  </div>
+  <div id="hint">施工动作只作用于准星正前方 1.5 米内的东西 · <kbd>Tab</kbd> 隐藏界面 · 颜色和装置在下拉框里选</div>
+</div>
+<div class="panel" id="result"></div>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/GLTFLoader.js"></script>
+<script src="renovate_layout.js"></script>
+<script src="models/renovate/models.js"></script>
+<script src="tex/renovate/textures.js"></script>
+<script src="tex/renovate/lightmaps.js"></script>
+<script src="tasks.js"></script>
+<script src="nav.js"></script>
+<script src="renovate.js"></script>
+</body>
+</html>

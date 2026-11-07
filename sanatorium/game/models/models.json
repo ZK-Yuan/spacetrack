@@ -1,0 +1,292 @@
+{
+ "Barrel_01": {
+  "tris": 2682,
+  "before": 2682,
+  "kb": 119,
+  "size": [
+   0.563,
+   0.563,
+   0.88
+  ]
+ },
+ "Lantern_01": {
+  "tris": 2999,
+  "before": 33902,
+  "kb": 237,
+  "size": [
+   0.122,
+   0.097,
+   0.294
+  ]
+ },
+ "SchoolChair_01": {
+  "tris": 5072,
+  "before": 5072,
+  "kb": 156,
+  "size": [
+   0.566,
+   0.675,
+   1.006
+  ]
+ },
+ "WoodenChair_01": {
+  "tris": 6000,
+  "before": 19992,
+  "kb": 234,
+  "size": [
+   0.689,
+   0.659,
+   2.274
+  ]
+ },
+ "barrel_stove": {
+  "tris": 6000,
+  "before": 9216,
+  "kb": 219,
+  "size": [
+   0.593,
+   0.593,
+   0.856
+  ]
+ },
+ "cardboard_box_01": {
+  "tris": 5999,
+  "before": 16952,
+  "kb": 165,
+  "size": [
+   0.387,
+   0.516,
+   0.341
+  ]
+ },
+ "dead_tree_trunk": {
+  "tris": 6999,
+  "before": 101802,
+  "kb": 307,
+  "size": [
+   3.05,
+   0.277,
+   0.289
+  ]
+ },
+ "dead_tree_trunk_02": {
+  "tris": 6999,
+  "before": 83128,
+  "kb": 361,
+  "size": [
+   4.052,
+   1.053,
+   1.057
+  ]
+ },
+ "drawer_cabinet": {
+  "tris": 5997,
+  "before": 26406,
+  "kb": 309,
+  "size": [
+   1.141,
+   0.49,
+   1.881
+  ]
+ },
+ "gothic_statue": {
+  "tris": 9000,
+  "before": 27739,
+  "kb": 609,
+  "size": [
+   1.475,
+   1.564,
+   1.74
+  ]
+ },
+ "hanging_industrial_lamp": {
+  "tris": 2500,
+  "before": 9530,
+  "kb": 158,
+  "size": [
+   0.554,
+   0.555,
+   1.359
+  ]
+ },
+ "industrial_caged_sconce": {
+  "tris": 1491,
+  "before": 26576,
+  "kb": 146,
+  "size": [
+   1.213,
+   0.408,
+   0.92
+  ]
+ },
+ "large_iron_gate": {
+  "tris": 8997,
+  "before": 38140,
+  "kb": 377,
+  "size": [
+   2.95,
+   0.098,
+   2.929
+  ]
+ },
+ "medical_box": {
+  "tris": 3718,
+  "before": 3718,
+  "kb": 169,
+  "size": [
+   0.525,
+   0.35,
+   0.098
+  ]
+ },
+ "metal_office_desk": {
+  "tris": 5996,
+  "before": 6898,
+  "kb": 247,
+  "size": [
+   2.0,
+   0.947,
+   0.788
+  ]
+ },
+ "metal_tool_chest": {
+  "tris": 5994,
+  "before": 13360,
+  "kb": 296,
+  "size": [
+   0.685,
+   0.407,
+   0.652
+  ]
+ },
+ "old_bed_frame": {
+  "tris": 6000,
+  "before": 49990,
+  "kb": 546,
+  "size": [
+   0.905,
+   2.002,
+   1.204
+  ]
+ },
+ "painted_wooden_bench": {
+  "tris": 630,
+  "before": 630,
+  "kb": 54,
+  "size": [
+   1.165,
+   0.497,
+   0.889
+  ]
+ },
+ "painted_wooden_nightstand": {
+  "tris": 470,
+  "before": 470,
+  "kb": 54,
+  "size": [
+   0.505,
+   0.509,
+   0.616
+  ]
+ },
+ "steel_frame_shelves_01": {
+  "tris": 4348,
+  "before": 4348,
+  "kb": 163,
+  "size": [
+   10.974,
+   5.021,
+   21.405
+  ]
+ },
+ "tree_stump_01": {
+  "tris": 3000,
+  "before": 41046,
+  "kb": 136,
+  "size": [
+   1.425,
+   1.59,
+   0.571
+  ]
+ },
+ "vintage_cabinet_01": {
+  "tris": 5995,
+  "before": 61096,
+  "kb": 542,
+  "size": [
+   2.021,
+   0.671,
+   2.236
+  ]
+ },
+ "vintage_crutches_01": {
+  "tris": 5999,
+  "before": 10628,
+  "kb": 197,
+  "size": [
+   0.384,
+   0.204,
+   1.605
+  ]
+ },
+ "vintage_grandfather_clock_01": {
+  "tris": 5999,
+  "before": 8582,
+  "kb": 802,
+  "size": [
+   0.626,
+   0.427,
+   2.191
+  ]
+ },
+ "vintage_radio_transceiver": {
+  "tris": 5991,
+  "before": 42350,
+  "kb": 441,
+  "size": [
+   0.574,
+   0.417,
+   0.44
+  ]
+ },
+ "wall_clock": {
+  "tris": 1498,
+  "before": 3658,
+  "kb": 103,
+  "size": [
+   0.321,
+   0.047,
+   0.322
+  ]
+ },
+ "wheelchair_01": {
+  "tris": 6000,
+  "before": 40252,
+  "kb": 359,
+  "size": [
+   0.824,
+   1.09,
+   1.103
+  ]
+ },
+ "wooden_bookshelf_worn": {
+  "tris": 6000,
+  "before": 10106,
+  "kb": 203,
+  "size": [
+   1.374,
+   0.581,
+   2.063
+  ]
+ },
+ "wooden_crate_01": {
+  "tris": 5997,
+  "before": 6576,
+  "kb": 206,
+  "size": [
+   0.825,
+   0.409,
+   0.35
+  ]
+ }
+}

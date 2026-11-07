@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Space Track · 上帝视角空间图</title>
+<style>
+  @font-face { font-family: "Inter"; font-weight: 400 700; font-display: block; src: url("../fonts/Inter-latin.woff2") format("woff2"); }
+  @font-face { font-family: "Inter Tight"; font-weight: 500 700; font-display: block; src: url("../fonts/InterTight-latin.woff2") format("woff2"); }
+  @font-face { font-family: "JetBrains Mono"; font-weight: 400 600; font-display: block; src: url("../fonts/JetBrainsMono-latin.woff2") format("woff2"); }
+  body { margin: 0; background: #06090d; color: #eef2f4; font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; }
+  main { width: min(1400px, 96vw); margin: 0 auto; padding: 24px 0 48px; display: flex; flex-direction: column; gap: 18px; }
+  h1 { margin: 0; font-size: 22px; } p { margin: 0; color: #8fa0aa; font-size: 14px; }
+  canvas { width: 100%; height: auto; border-radius: 12px; border: 1px solid rgba(255,255,255,.08); }
+</style>
+</head>
+<body>
+<main id="out">
+  <h1>上帝视角空间图</h1>
+  <p>由 maps.js 从各场景的布局数据画出；<code>node make_maps.js</code> 导出到 ../thumbs/map_*_zh.jpg 和 map_*_en.jpg（浅色，首页中英文各一套）。</p>
+</main>
+<script src="../world.js"></script>
+<script src="../course_layout.js"></script>
+<script src="../renovate_layout.js"></script>
+<script src="../detective_layout.js"></script>
+<script src="maps.js"></script>
+<script>
+  window.MAP_VARIANTS = [{ theme: "light", lang: "zh", suffix: "_zh" }, { theme: "light", lang: "en", suffix: "_en" }];
+  new Promise((ok, no) => {
+    const x = new XMLHttpRequest();
+    x.open("GET", "../sanatorium/game/data/level.json");
+    x.onload = () => ok(JSON.parse(x.responseText));
+    x.onerror = () => no(new Error("level.json 读取失败"));
+    x.send();
+  }).then((level) => {
+    window.SANA_LEVEL = level;
+    return Promise.all(['500 24px "Inter"', '700 24px "Inter"', '700 58px "Inter Tight"', '600 22px "JetBrains Mono"'].map((f) => document.fonts.load(f)));
+  }).then(() => {
+    MAP_VARIANTS.forEach((o) => Object.keys(SAMaps.draw).forEach((name) => document.getElementById("out").appendChild(SAMaps.canvas(name, o))));
+    SAMaps.ready = true;
+  }).catch((e) => { window.__mapsFailed = true; throw e; });
+</script>
+</body>
+</html>
